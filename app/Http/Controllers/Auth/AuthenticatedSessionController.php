@@ -34,10 +34,6 @@ class AuthenticatedSessionController extends Controller
 
     public function __construct()
     {
-        if (!file_exists(storage_path() . "/installed")) {
-            header('location:install');
-            die;
-        }
     }
 
     /*protected function authenticated(Request $request, $user)
@@ -52,19 +48,10 @@ class AuthenticatedSessionController extends Controller
 
     public function store(LoginRequest $request)
     {
-        $settings = Utility::settings();
-        if (isset($settings['recaptcha_module']) && $settings['recaptcha_module'] == 'yes') {
-            $validation['g-recaptcha-response'] = 'required';
-        } else {
-            $validation = [];
-        }
-        $this->validate($request, $validation);
-
         $request->authenticate();
 
         $request->session()->regenerate();
         $user = \Auth::user();
-
         if ($user->type != 'company' && $user->type != 'super admin') {
             // $ip = '49.36.83.154'; // This is static ip address
             $ip = $_SERVER['REMOTE_ADDR']; // your ip address here
@@ -107,7 +94,6 @@ class AuthenticatedSessionController extends Controller
             $lang = \App\Models\Utility::getValByName('default_language');
         }
         \App::setLocale($lang);
-
         return view('auth.login', compact('lang'));
     }
 
@@ -116,7 +102,7 @@ class AuthenticatedSessionController extends Controller
         if ($lang == '') {
             $lang = \App\Models\Utility::getValByName('default_language');
         }
-        
+
         \App::setLocale($lang);
 
         return view('auth.forgot-password', compact('lang'));
@@ -130,24 +116,24 @@ class AuthenticatedSessionController extends Controller
             $validation = [];
         }
         $this->validate($request, $validation);
-        
+
         $request->validate([
-            'email' => 'required|email',
+            'employee_id' => 'required',
         ]);
-        
+
         // We will send the password reset link to this user. Once we have attempted
         // to send the link, we will examine the response then see the message we
         // need to show to the user. Finally, we'll send out a proper response.
         try {
             Utility::getSMTPDetails(1);
             $status = Password::sendResetLink(
-                $request->only('email')
+                $request->only('employee_id')
             );
-            
+
             return $status == Password::RESET_LINK_SENT
             ? back()->with('status', __($status))
-            : back()->withInput($request->only('email'))
-            ->withErrors(['email' => __($status)]);
+            : back()->withInput($request->only('employee_id'))
+            ->withErrors(['employee_id' => __($status)]);
         } catch (\Exception $e) {
             return redirect()->back()->withErrors('E-Mail has been not sent due to SMTP configuration');
         }

@@ -2448,7 +2448,7 @@
                     {{ Form::close() }}
                 </div>
 
-                <div class="card" id="pills-chatgpt-settings">
+                {{-- <div class="card" id="pills-chatgpt-settings">
                     <div class="col-md-12">
                         {{ Form::model($settings, ['route' => 'settings.chatgptkey', 'method' => 'post']) }}
                         <div class="card-header">
@@ -2492,7 +2492,7 @@
                         </div>
                         {{ Form::close() }}
                     </div>
-                </div>
+                </div> --}}
 
             </div>
         </div>

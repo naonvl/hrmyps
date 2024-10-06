@@ -93,8 +93,8 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="info text-sm">
-                                        <strong class="font-bold"><?php echo e(__('Employee ID')); ?> : </strong>
-                                        <span><?php echo e($employeesId); ?></span>
+                                        <strong class="font-bold">NIK : </strong>
+                                        <span><?php echo e($employee->employee_id); ?></span>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -194,16 +194,23 @@
                                     $employeedoc = $employee->documents()->pluck('document_value', 'document_id');
                                     $logo = \App\Models\Utility::get_file('uploads/document');
                                 ?>
-                                <?php if(!$documents->isEmpty()): ?>
-                                    <?php $__currentLoopData = $documents; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $document): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                        <div class="col-md-6">
-                                            <div class="info text-sm">
-                                                <strong class="font-bold"><?php echo e($document->name); ?> : </strong>
-                                                <span><a href="<?php echo e(!empty($employeedoc[$document->id]) ? $logo . '/' . $employeedoc[$document->id] : ''); ?>"
-                                                        target="_blank"><?php echo e(!empty($employeedoc[$document->id]) ? $employeedoc[$document->id] : ''); ?></a></span>
-                                            </div>
-                                        </div>
-                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                <?php if(!$documentUploads->isEmpty()): ?>
+                                <table class="datatable table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th><?php echo e(__('Type')); ?></th>
+                                            <th><?php echo e(__('Document Name')); ?></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php $__currentLoopData = $documentUploads; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $document): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <tr>
+                                                <td><?php echo e($document->name); ?></td>
+                                                <td><?php echo e($document->typ); ?></td>
+                                            </tr>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    </tbody>
+                                </table>
                                 <?php else: ?>
                                     <div class="text-center">
                                         No Document Type Added.!

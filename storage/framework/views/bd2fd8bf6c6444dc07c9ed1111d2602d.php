@@ -1,5 +1,5 @@
 <?php $__env->startSection('page-title'); ?>
-   <?php echo e(__('Manage Document')); ?>
+    <?php echo e(__('Manage Document')); ?>
 
 <?php $__env->stopSection(); ?>
 
@@ -7,106 +7,143 @@
     <li class="breadcrumb-item"><a href="<?php echo e(route('home')); ?>"><?php echo e(__('Home')); ?></a></li>
     <li class="breadcrumb-item"><?php echo e(__('Document')); ?></li>
 <?php $__env->stopSection(); ?>
-
+<?php $__env->startSection('page-style'); ?>
+<style>
+    .dataTable-top{
+        display: none !important;
+    }
+</style>
+<?php $__env->stopSection(); ?>
 <?php $__env->startSection('action-button'); ?>
-   <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Create Document')): ?>
-        <a href="#" data-url="<?php echo e(route('document-upload.create')); ?>" data-ajax-popup="true"
-            data-title="<?php echo e(__('Create New  Document Type')); ?>" data-size="lg" data-bs-toggle="tooltip" title="" class="btn btn-sm btn-primary"
+    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Create Document')): ?>
+        <a href="#" data-url="<?php echo e(route('document-upload.create')); ?>" data-ajax-popup="true" data-title="Upload Dokumen"
+            data-size="lg" data-bs-toggle="tooltip" title="" class="btn btn-sm btn-primary"
             data-bs-original-title="<?php echo e(__('Create')); ?>">
             <i class="ti ti-plus"></i>
         </a>
     <?php endif; ?>
 <?php $__env->stopSection(); ?>
-
 <?php $__env->startSection('content'); ?>
-
     <div class="col-xl-12">
         <div class="card">
-            <div class="card-header card-body table-border-style">
-                
-                <div class="table-responsive">
-                    <table class="table" id="pc-dt-simple">
-                        <thead>
-                            <tr>
-                                <th><?php echo e(__('Name')); ?></th>
-                                <th><?php echo e(__('Document')); ?></th>
-                                <th><?php echo e(__('Role')); ?></th>
-                                <th><?php echo e(__('Description')); ?></th>
-                                <?php if(Gate::check('Edit Document') || Gate::check('Delete Document')): ?>
-                                    <th width="200px"><?php echo e(__('Action')); ?></th>
-                                <?php endif; ?>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php $__currentLoopData = $documents; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $document): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                               
-                                <tr>
-                                    <td><?php echo e($document->name); ?></td>
-                                    <td>
-                                        <?php
-                                            $documentPath=\App\Models\Utility::get_file('uploads/documentUpload');
-                                            $roles = \Spatie\Permission\Models\Role::find($document->role);
-                                       ?>
-                                        <?php if(!empty($document->document)): ?>
-                                        <div class="action-btn bg-primary ms-2">
-                                            <a class="mx-3 btn btn-sm align-items-center" href="<?php echo e($documentPath . '/' . $document->document); ?>" download>
-                                                <i class="ti ti-download text-white"></i>
-                                            </a>
-                                        </div>
-                                            <div class="action-btn bg-secondary ms-2">
-                                                <a class="mx-3 btn btn-sm align-items-center" href="<?php echo e($documentPath . '/' . $document->document); ?>" target="_blank"  >
-                                                    <i class="ti ti-crosshair text-white" data-bs-toggle="tooltip" data-bs-original-title="<?php echo e(__('Preview')); ?>"></i>
-                                                </a>
-                                            </div>
-                                        <?php else: ?>
-                                            <p>-</p>
-                                        <?php endif; ?>
-                                    </td>
-                                    <td><?php echo e(!empty($roles) ? $roles->name : 'All'); ?></td>
-                                    <td>
-                                        <p style="white-space: nowrap;
-                                            width: 200px;
-                                            overflow: hidden;
-                                            text-overflow: ellipsis;"><?php echo e($document->description); ?>
-
-                                        </p>
-                                    </td>
-                                    <td class="Action">
-                                        <span>
-                                            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Edit Document')): ?>
-                                                <div class="action-btn bg-info ms-2">
-                                                    <a href="#" class="mx-3 btn btn-sm  align-items-center"
-                                                        data-url="<?php echo e(route('document-upload.edit', $document->id)); ?>"
-                                                        data-ajax-popup="true" data-size="md" data-bs-toggle="tooltip" title=""
-                                                        data-title="<?php echo e(__('Edit Document')); ?>"
-                                                        data-bs-original-title="<?php echo e(__('Edit')); ?>">
-                                                        <i class="ti ti-pencil text-white"></i>
-                                                    </a>
-                                                </div>
-                                            <?php endif; ?>
-
-                                            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Delete Document')): ?>
-                                                <div class="action-btn bg-danger ms-2">
-                                                    <?php echo Form::open(['method' => 'DELETE', 'route' => ['document-upload.destroy', $document->id], 'id' => 'delete-form-' . $document->id]); ?>
-
-                                                    <a href="#" data-size="lg" class="mx-3 btn btn-sm  align-items-center bs-pass-para"
-                                                        data-bs-toggle="tooltip" title="" data-bs-original-title="Delete"
-                                                        aria-label="Delete"><i
-                                                            class="ti ti-trash text-white text-white"></i></a>
-                                                    </form>
-                                                </div>
-                                            <?php endif; ?>
-                                        </span>
-                                    </td>
-                                </tr>
-                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                        </tbody>
-                    </table>
-                </div>
+            <input type="hidden" id="user-type" value="<?php echo e(\Auth::user()->type); ?>">
+            <input type="hidden" id="can-delete-document" value="<?php echo e(Gate::check('Delete Document') ? 'true' : 'false'); ?>">
+            <input type="hidden" id="can-update-document" value="<?php echo e(Gate::check('Edit Document') ? 'true' : 'false'); ?>">
+            <div class="card-body p-4">
+                <table class="datatable" id="pc-dt-simple">
+                    <thead>
+                        <tr>
+                            <th><?php echo e(__('Name')); ?></th>
+                            <th><?php echo e(__('Document')); ?></th>
+                            <th><?php echo e(__('Description')); ?></th>
+                            <th width="200px"><?php echo e(__('Action')); ?></th>
+                        </tr>
+                    </thead>
+                </table>
             </div>
         </div>
     </div>
-
 <?php $__env->stopSection(); ?>
+
+<?php $__env->startPush('script-page'); ?>
+    <script src="<?php echo e(asset('assets/js/plugins/main.min.js')); ?>"></script>
+    <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            const canDelete = $('#can-delete-document').val();
+            const canEdit = $('#can-update-document').val();
+            const userType = $('#user-type').val();
+            $('.dataTable-bottom').remove();
+            $('.datatable').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: '<?php echo e(route('document-upload.list')); ?>', // Assuming you're using a route to fetch data
+                columns: [{
+                        data: 'name',
+                        name: 'name'
+                    },
+                    {
+                        data: 'document',
+                        render: function(data, type, row) {
+                            let documentPath =
+                                '<?php echo e(\App\Models\Utility::get_file('uploads/documentUpload')); ?>';
+                            return `<div class="action-btn bg-primary ms-2">
+                                    <a class="mx-3 btn btn-sm align-items-center"
+                                        href="${documentPath}/${row.document}">
+                                        <i class="ti ti-download text-white"></i>
+                                    </a>
+                                </div>
+                                <div class="action-btn bg-secondary ms-2">
+                                    <a class="mx-3 btn btn-sm align-items-center"
+                                        href="${documentPath}/${row.document}" target="_blank">
+                                        <i class="ti ti-crosshair text-white" data-bs-toggle="tooltip"
+                                            data-bs-original-title="<?php echo e(__('Preview')); ?>"></i>
+                                    </a>
+                                </div>`;
+                        },
+                        name: 'document'
+                    },
+                    {
+                        data: 'description',
+                        name: 'description'
+                    },
+                    {
+                        data: 'action',
+                        render: function(data, type, row) {
+                            if (userType == 'hr') {
+                                return `<div class="action-btn bg-info ms-2">
+                                <a href="#" class="mx-3 btn btn-sm  align-items-center"
+                                    data-url=""
+                                    data-ajax-popup="true" data-size="md" data-bs-toggle="tooltip"
+                                    title="" data-title="<?php echo e(__('Approve Document')); ?>"
+                                    data-bs-original-title="<?php echo e(__('Approve')); ?>">
+                                    <i class="ti ti-check text-white"></i>
+                                </a>
+                            </div>
+                            <div class="action-btn bg-danger ms-2">
+                                <button type="button" class="mx-3 btn btn-sm  align-items-center"
+                                    data-bs-toggle="modal" data-bs-target="#rejectModal" title=""
+                                    data-title="<?php echo e(__('Reject Document')); ?>"
+                                    data-bs-original-title="<?php echo e(__('Reject')); ?>">
+                                    <i class="ti ti-x text-white"></i>
+                                </button>
+                            </div>`;
+                            } else {
+                                let actionBtn = '';
+                                if (canEdit) {
+                                    actionBtn += `<div class="action-btn bg-info ms-2">
+                                                        <a href="#" class="mx-3 btn btn-sm  align-items-center"
+                                                            data-url=""
+                                                            data-ajax-popup="true" data-size="md" data-bs-toggle="tooltip"
+                                                            title="" data-title="<?php echo e(__('Edit Document')); ?>"
+                                                            data-bs-original-title="<?php echo e(__('Edit')); ?>">
+                                                            <i class="ti ti-pencil text-white"></i>
+                                                        </a>
+                                                    </div>`;
+                                }
+
+                                if (canDelete) {
+                                    actionBtn += `<div class="action-btn bg-danger ms-2">
+                                                        <a href="#" class="mx-3 btn btn-sm  align-items-center"
+                                                            data-url=""
+                                                            data-ajax-popup="true" data-size="md" data-bs-toggle="tooltip"
+                                                            title="" data-title="<?php echo e(__('Delete Document')); ?>"
+                                                            data-bs-original-title="<?php echo e(__('Delete')); ?>">
+                                                            <i class="ti ti-trash text-white"></i>
+                                                        </a>
+                                                    </div>`;
+                                }
+
+                                return actionBtn;
+                            }
+
+                        },
+                        name: 'action',
+                    }
+                ]
+            });
+        });
+    </script>
+<?php $__env->stopPush(); ?>
 
 <?php echo $__env->make('layouts.admin', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\hrm\resources\views/documentUpload/index.blade.php ENDPATH**/ ?>

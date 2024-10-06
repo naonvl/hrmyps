@@ -2,21 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DucumentUpload;
+use App\Models\DocumentUpload;
+use App\Models\Document;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 
-class DucumentUploadController extends Controller
+class DocumentUploadController extends Controller
 {
 
     public function index()
     {
         if (\Auth::user()->can('Manage Document')) {
             if (\Auth::user()->type == 'company' || \Auth::user()->type == 'hr') {
-                $documents = DucumentUpload::where('created_by', \Auth::user()->creatorId())->get();
+                $documents = DocumentUpload::where('created_by', \Auth::user()->creatorId())->get();
             } else {
                 $userRole  = \Auth::user()->roles->first();
-                $documents = DucumentUpload::whereIn(
+                $documents = DocumentUpload::whereIn(
                     'role',
                     [
                         $userRole->id,
@@ -24,21 +25,73 @@ class DucumentUploadController extends Controller
                     ]
                 )->where('created_by', \Auth::user()->creatorId())->get();
             }
-            
+
             return view('documentUpload.index', compact('documents'));
         } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }
     }
 
+    public function list(Request $request)
+    {
+        $limit = $request->get('length', 10);
+        $start = $request->get('start', 0);
+        $search = $request->get('search.value');
 
+        $query = DocumentUpload::query();
+
+        if (\Auth::user()->type != 'hr') {
+            $query->where('created_by', \Auth::user()->creatorId());
+        }
+
+        if (isset($search)) {
+            $query->where(function ($query) use ($search) {
+                $query->where('employee_id', 'LIKE', "%{$search}%")
+                    ->orWhere('document_id', 'LIKE', "%{$search}%")
+                    ->orWhere('role', 'LIKE', "%{$search}%")
+                    ->orWhere('status', 'LIKE', "%{$search}%");
+            });
+        }
+
+        $documents = $query->orderBy('id', 'desc')->paginate($limit, ['*'], 'page', $start / $limit + 1);
+
+        return response()->json([
+            'draw' => $request->get('draw'),
+            'recordsTotal' => $documents->total(),
+            'recordsFiltered' => $documents->total(),
+            'data' => $documents->items(),
+        ]);
+    }
     public function create()
     {
         if (\Auth::user()->can('Create Document')) {
-            $roles = Role::where('created_by', \Auth::user()->creatorId())->get()->pluck('name', 'id');
-            $roles->prepend('All', '0');
+            $types = Document::get()->pluck('name', 'id');
+            $types->prepend('Pilih Tipe', 'null');
 
-            return view('documentUpload.create', compact('roles'));
+            return view('documentUpload.create', compact('types'));
+        } else {
+            return redirect()->back()->with('error', __('Permission denied.'));
+        }
+    }
+    public function approve()
+    {
+        if (\Auth::user()->can('Create Document')) {
+            $types = Document::get()->pluck('name', 'id');
+            $types->prepend('Pilih Tipe', 'null');
+
+            return view('documentUpload.create', compact('types'));
+        } else {
+            return redirect()->back()->with('error', __('Permission denied.'));
+        }
+    }
+
+    public function reject()
+    {
+        if (\Auth::user()->can('Create Document')) {
+            $types = Document::get()->pluck('name', 'id');
+            $types->prepend('Pilih Tipe', 'null');
+
+            return view('documentUpload.create', compact('types'));
         } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }
@@ -53,6 +106,7 @@ class DucumentUploadController extends Controller
                 $request->all(),
                 [
                     'name' => 'required',
+                    'type' => 'required|not_in:null',
                     'documents' => 'required',
                 ]
             );
@@ -82,7 +136,7 @@ class DucumentUploadController extends Controller
                 }
             }
 
-            $document              = new DucumentUpload();
+            $document              = new DocumentUpload();
             $document->name        = $request->name;
             $document->document    = !empty($request->documents) ? $fileNameToStore : '';
             $document->role        = $request->role;
@@ -97,7 +151,7 @@ class DucumentUploadController extends Controller
     }
 
 
-    public function show(DucumentUpload $ducumentUpload)
+    public function show(DocumentUpload $DocumentUpload)
     {
         //
     }
@@ -110,9 +164,9 @@ class DucumentUploadController extends Controller
             $roles = Role::where('created_by', \Auth::user()->creatorId())->get()->pluck('name', 'id');
             $roles->prepend('All', '0');
 
-            $ducumentUpload = DucumentUpload::find($id);
+            $DocumentUpload = DocumentUpload::find($id);
 
-            return view('documentUpload.edit', compact('roles', 'ducumentUpload'));
+            return view('documentUpload.edit', compact('roles', 'DocumentUpload'));
         } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }
@@ -135,7 +189,7 @@ class DucumentUploadController extends Controller
             }
             $roles = $request->role;
 
-            $document = DucumentUpload::find($id);
+            $document = DocumentUpload::find($id);
 
             if (!empty($request->documents)) {
 
@@ -157,12 +211,12 @@ class DucumentUploadController extends Controller
                 }
             }
 
-            
+
             $document->name = $request->name;
             if (!empty($request->documents)) {
                 $document->document = !empty($request->documents) ? $fileNameToStore : '';
             }
-            
+
             $document->role        = $request->role;
             $document->description = $request->description;
             $document->created_by = \Auth::user()->creatorId();
@@ -178,7 +232,7 @@ class DucumentUploadController extends Controller
     public function destroy($id)
     {
         if (\Auth::user()->can('Delete Document')) {
-            $document = DucumentUpload::find($id);
+            $document = DocumentUpload::find($id);
             if ($document->created_by == \Auth::user()->creatorId()) {
                 $document->delete();
 

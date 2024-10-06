@@ -8,8 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Branch extends Model
 {
     protected $fillable = [
-        'name','created_by'
+        'name','created_by',
+        'branch_start_time',
+        'branch_end_time',
     ];
 
-    
+
 }

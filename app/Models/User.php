@@ -80,7 +80,7 @@ class User extends Authenticatable implements MustVerifyEmail
             EmailTemplate::create(
                 [
                     'name' => $eTemp,
-                    
+
                     'slug' => strtolower(str_replace(' ', '_', $eTemp)),
                     'created_by' => 1,
                 ]
@@ -2590,14 +2590,14 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return Plan::count();
     }
-    
+
     public function contractNumberFormat($number)
     {
         $settings = Utility::settings();
 
         return $settings["contract_prefix"] . sprintf("%05d", $number);
     }
-    
+
     public function countPaidCompany()
     {
         return User::where('type', '=', 'company')->whereNotIn(
@@ -2641,7 +2641,7 @@ class User extends Authenticatable implements MustVerifyEmail
     }
     public static function userDefaultData()
     {
-        
+
         // Make Entry In User_Email_Template
         $allEmail = EmailTemplate::all();
         foreach($allEmail as $email)
@@ -2672,5 +2672,5 @@ class User extends Authenticatable implements MustVerifyEmail
             );
         }
     }
-    
+
 }

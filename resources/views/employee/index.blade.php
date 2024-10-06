@@ -22,7 +22,7 @@
         <i class="ti ti-file"></i>
     </a>
     @can('Create Employee')
-        <a href="{{ route('employee.create') }}" 
+        <a href="{{ route('employee.create') }}"
             data-title="{{ __('Create New Employee') }}" data-bs-toggle="tooltip" title="" class="btn btn-sm btn-primary"
             data-bs-original-title="{{ __('Create') }}">
             <i class="ti ti-plus"></i>
@@ -57,9 +57,9 @@
                                     <td>
                                         @can('Show Employee')
                                             <a class="btn btn-outline-primary"
-                                                href="{{ route('employee.show', \Illuminate\Support\Facades\Crypt::encrypt($employee->id)) }}">{{ \Auth::user()->employeeIdFormat($employee->employee_id) }}</a>
+                                                href="{{ route('employee.show', \Illuminate\Support\Facades\Crypt::encrypt($employee->id)) }}">{{ $employee->employee_id }}</a>
                                         @else
-                                            <a href="#" class="btn btn-outline-primary">{{ \Auth::user()->employeeIdFormat($employee->employee_id) }}</a>
+                                            <a href="#" class="btn btn-outline-primary">{{ $employee->employee_id }}</a>
                                         @endcan
                                     </td>
                                     <td>{{ $employee->name }}</td>

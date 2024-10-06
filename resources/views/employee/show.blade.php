@@ -91,8 +91,8 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="info text-sm">
-                                        <strong class="font-bold">{{ __('Employee ID') }} : </strong>
-                                        <span>{{ $employeesId }}</span>
+                                        <strong class="font-bold">NIK : </strong>
+                                        <span>{{ $employee->employee_id }}</span>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -192,16 +192,23 @@
                                     $employeedoc = $employee->documents()->pluck('document_value', 'document_id');
                                     $logo = \App\Models\Utility::get_file('uploads/document');
                                 @endphp
-                                @if (!$documents->isEmpty())
-                                    @foreach ($documents as $key => $document)
-                                        <div class="col-md-6">
-                                            <div class="info text-sm">
-                                                <strong class="font-bold">{{ $document->name }} : </strong>
-                                                <span><a href="{{ !empty($employeedoc[$document->id]) ? $logo . '/' . $employeedoc[$document->id] : '' }}"
-                                                        target="_blank">{{ !empty($employeedoc[$document->id]) ? $employeedoc[$document->id] : '' }}</a></span>
-                                            </div>
-                                        </div>
-                                    @endforeach
+                                @if (!$documentUploads->isEmpty())
+                                <table class="datatable table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>{{ __('Type') }}</th>
+                                            <th>{{ __('Document Name') }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($documentUploads as $key => $document)
+                                            <tr>
+                                                <td>{{ $document->name }}</td>
+                                                <td>{{ $document->typ }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
                                 @else
                                     <div class="text-center">
                                         No Document Type Added.!

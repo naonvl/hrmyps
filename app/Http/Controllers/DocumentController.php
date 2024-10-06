@@ -41,7 +41,7 @@ class DocumentController extends Controller
             $validator = \Validator::make(
                 $request->all(), [
                                    'name' => 'required|max:20',
-                                   'is_required' => 'required',
+                                   'is_mandatory' => 'required',
                                ]
             );
             if($validator->fails())
@@ -53,7 +53,7 @@ class DocumentController extends Controller
 
             $document              = new Document();
             $document->name        = $request->name;
-            $document->is_required = $request->is_required;
+            $document->is_mandatory = $request->is_mandatory;
             $document->created_by  = \Auth::user()->creatorId();
             $document->save();
 
@@ -111,7 +111,8 @@ class DocumentController extends Controller
 
 
                 $document->name        = $request->name;
-                $document->is_required = $request->is_required;
+                $document->is_mandatory = $request->is_mandatory;
+                $document->need_approval = $request->need_approval;
                 $document->save();
 
                 return redirect()->route('document.index')->with('success', __('Document type successfully updated.'));

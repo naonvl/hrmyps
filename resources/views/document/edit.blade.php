@@ -18,9 +18,17 @@
 
         <div class="col-lg-12 col-md-12 col-sm-12">
             <div class="form-group">
-                {{ Form::label('is_required', __('Required Field'), ['class' => 'form-label']) }}
+                {{ Form::label('is_mandatory','Dokumen Wajib', ['class' => 'form-label']) }}
                 <div class="form-icon-user">
-                    {{ Form::select('is_required', ['0'=>'Not Required' ,'1'=>'Is Required'], null, ['class' => 'form-control select2 ','placeholder' => __('Select Department')]) }}
+                    {{ Form::select('is_mandatory', ['0'=>'Tidak' ,'1'=>'Ya'], null, ['class' => 'form-control select2 ','placeholder' => __('Select Department')]) }}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="form-group">
+                {{ Form::label('need_approval','Diperlukan Approval', ['class' => 'form-label']) }}
+                <div class="form-icon-user">
+                    {{ Form::select('need_approval', ['0'=>'Tidak' ,'1'=>'Ya'], null, ['class' => 'form-control select2 ','placeholder' => __('Select Department')]) }}
                 </div>
             </div>
         </div>

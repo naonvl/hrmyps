@@ -6,6 +6,7 @@ use App\Models\Branch;
 use App\Models\Department;
 use App\Models\Designation;
 use App\Models\Document;
+use App\Models\DocumentUpload;
 use App\Models\Employee;
 use App\Models\EmployeeDocument;
 use App\Mail\UserCreate;
@@ -65,7 +66,7 @@ class EmployeeController extends Controller
             $designations     = Designation::where('created_by', \Auth::user()->creatorId())->get()->pluck('name', 'id');
             $employees        = User::where('created_by', \Auth::user()->creatorId())->get();
 
-            $employeesId      = \Auth::user()->employeeIdFormat($this->employeeNumber());
+            $employeesId      = '';
 
             return view('employee.create', compact('employees', 'employeesId', 'departments', 'designations', 'documents', 'branches', 'company_settings'));
         } else {
@@ -235,7 +236,7 @@ class EmployeeController extends Controller
             $departments  = Department::where('created_by', \Auth::user()->creatorId())->get()->pluck('name', 'id');
             $designations = Designation::where('created_by', \Auth::user()->creatorId())->get()->pluck('name', 'id');
             $employee     = Employee::find($id);
-            $employeesId  = \Auth::user()->employeeIdFormat($employee->employee_id);
+            $employeesId  = $employee->employee_id;
 
             return view('employee.edit', compact('employee', 'employeesId', 'branches', 'departments', 'designations', 'documents'));
         } else {
@@ -246,73 +247,12 @@ class EmployeeController extends Controller
     public function update(Request $request, $id)
     {
         if (\Auth::user()->can('Edit Employee')) {
-            $validator = \Validator::make(
-                $request->all(),
-                [
-                    'name' => 'required',
-                    'dob' => 'required',
-                    'gender' => 'required',
-                    'phone' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:9',
-                    'address' => 'required',
-                    'document.*' => 'required',
-                ]
-            );
-            if ($validator->fails()) {
-                $messages = $validator->getMessageBag();
-
-                return redirect()->back()->with('error', $messages->first());
-            }
-
-            $employee = Employee::findOrFail($id);
-
-            if ($request->document) {
-                foreach ($request->document as $key => $document) {
-                    if (!empty($document)) {
-
-
-                        $filenameWithExt = $request->file('document')[$key]->getClientOriginalName();
-                        $filename        = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-                        $extension       = $request->file('document')[$key]->getClientOriginalExtension();
-                        $fileNameToStore = $filename . '_' . time() . '.' . $extension;
-
-                        $dir             = 'uploads/document/';
-
-                        $image_path      = $dir . $fileNameToStore;
-
-                        if (\File::exists($image_path)) {
-                            \File::delete($image_path);
-                        }
-
-                        $path = \Utility::upload_coustom_file($request, 'document', $fileNameToStore, $dir, $key, []);
-
-                        if ($path['flag'] == 1) {
-                            $url = $path['url'];
-                        } else {
-                            return redirect()->back()->with('error', __($path['msg']));
-                        }
-
-                        $employee_document = EmployeeDocument::where('employee_id', $employee->employee_id)->where('document_id', $key)->first();
-
-                        if (!empty($employee_document)) {
-                            if ($employee_document->document_value) {
-                                \File::delete(storage_path('uploads/document/' . $employee_document->document_value));
-                            }
-                            $employee_document->document_value = $fileNameToStore;
-                            $employee_document->save();
-                        } else {
-                            $employee_document                 = new EmployeeDocument();
-                            $employee_document->employee_id    = $employee->employee_id;
-                            $employee_document->document_id    = $key;
-                            $employee_document->document_value = $fileNameToStore;
-                            $employee_document->save();
-                        }
-                    }
-                }
-            }
-
             $employee = Employee::findOrFail($id);
             $input    = $request->all();
             $employee->fill($input)->save();
+            $user = User::find($employee->user_id);
+            $user->password = Hash::make($request->password);
+            $user->save();
             if ($request->salary) {
                 return redirect()->route('setsalary.index')->with('success', 'Employee successfully updated.');
             }
@@ -326,7 +266,6 @@ class EmployeeController extends Controller
             return redirect()->back()->with('error', __('Permission denied.'));
         }
     }
-
     public function destroy($id)
     {
 
@@ -370,9 +309,9 @@ class EmployeeController extends Controller
             $departments  = Department::where('created_by', \Auth::user()->creatorId())->get()->pluck('name', 'id');
             $designations = Designation::where('created_by', \Auth::user()->creatorId())->get()->pluck('name', 'id');
             $employee     = Employee::find($empId);
-            $employeesId  = \Auth::user()->employeeIdFormat($employee->employee_id);
+            $documentUploads    = DocumentUpload::where('created_by', \Auth::user()->creatorId())->get();
 
-            return view('employee.show', compact('employee', 'employeesId', 'branches', 'departments', 'designations', 'documents'));
+            return view('employee.show', compact('employee',  'branches', 'departments','documentUploads', 'designations', 'documents'));
         } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }

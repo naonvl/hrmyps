@@ -77,7 +77,8 @@
                                             <div class="modal-body">
                                                 {{ Form::open(['url' => 'attendanceemployee/attendance', 'method' => 'post', 'enctype' => 'multipart/form-data']) }}
                                                 <video id="video" width="100%" height="420" autoplay></video>
-                                                <canvas id="canvas" width="100%" height="420" style="display: none;"></canvas>
+                                                <canvas id="canvas" width="100%" height="420"
+                                                    style="display: none;"></canvas>
                                                 <button type="button" class="btn btn-primary w-100" id="snap"
                                                     style="margin-top: 10px;">Take Picture</button>
                                                 <button type="button" class="d-none btn btn-primary w-100" id="re-snap"
@@ -92,53 +93,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <script>
-                                    (function() {
-                                        var video = document.getElementById('video');
-                                        video.style.transform = 'scaleX(-1)';
-                                        var canvas = document.getElementById('canvas');
-                                        var ctx = canvas.getContext('2d');
-                                        var localMediaStream = null;
-
-                                        document.getElementById('snap').addEventListener('click', function() {
-                                            video.pause();
-                                            ctx.save();
-                                            ctx.scale(-1, 1);
-                                            ctx.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
-                                            ctx.restore();
-
-                                            var dataURL = canvas.toDataURL('image/png');
-                                            console.log(dataURL);
-                                            document.getElementById('snap').classList.add('d-none');
-                                            document.getElementById('re-snap').classList.remove('d-none');
-                                        });
-                                        document.getElementById('re-snap').addEventListener('click', function() {
-                                            document.getElementById('re-snap').classList.add('d-none');
-                                            document.getElementById('snap').classList.remove('d-none');
-                                            video.play();
-                                        });
-
-                                        navigator.mediaDevices.getUserMedia({
-                                                video: {
-                                                    facingMode: 'user',
-                                                    aspectRatio: 9 / 16
-                                                }
-                                            })
-                                            .then(function(stream) {
-                                                video.srcObject = stream;
-                                                localMediaStream = stream;
-                                            })
-                                            .catch(function(err) {
-                                                console.log('getUserMedia() error: ', err);
-                                            });
-
-                                        document.getElementById('clockInModal').addEventListener('hidden.bs.modal', function() {
-                                            if (localMediaStream != null) {
-                                                localMediaStream.getTracks().forEach(track => track.stop());
-                                            }
-                                        });
-                                    })();
-                                </script>
                             @else
                                 <button type="submit" value="0" name="in" id="clock_in"
                                     class="btn btn-primary disabled" disabled>{{ __('CLOCK IN') }}</button>
@@ -501,7 +455,53 @@
 
 @push('script-page')
     <script src="{{ asset('assets/js/plugins/main.min.js') }}"></script>
+    <script>
+        (function() {
+            var video = document.getElementById('video');
+            video.style.transform = 'scaleX(-1)';
+            var canvas = document.getElementById('canvas');
+            var ctx = canvas.getContext('2d');
+            var localMediaStream = null;
 
+            document.getElementById('snap').addEventListener('click', function() {
+                video.pause();
+                ctx.save();
+                ctx.scale(-1, 1);
+                ctx.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
+                ctx.restore();
+
+                var dataURL = canvas.toDataURL('image/png');
+                console.log(dataURL);
+                document.getElementById('snap').classList.add('d-none');
+                document.getElementById('re-snap').classList.remove('d-none');
+            });
+            document.getElementById('re-snap').addEventListener('click', function() {
+                document.getElementById('re-snap').classList.add('d-none');
+                document.getElementById('snap').classList.remove('d-none');
+                video.play();
+            });
+
+            navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: 'user',
+                        aspectRatio: 9 / 16
+                    }
+                })
+                .then(function(stream) {
+                    video.srcObject = stream;
+                    localMediaStream = stream;
+                })
+                .catch(function(err) {
+                    console.log('getUserMedia() error: ', err);
+                });
+
+            document.getElementById('clockInModal').addEventListener('hidden.bs.modal', function() {
+                // if (localMediaStream != null) {
+                //     localMediaStream.getTracks().forEach(track => track.stop());
+                // }
+            });
+        })();
+    </script>
     @if (Auth::user()->type == 'company' || Auth::user()->type == 'hr')
         <script type="text/javascript">
             $(document).ready(function() {

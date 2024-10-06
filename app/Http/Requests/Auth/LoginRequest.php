@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Auth;
 
 use App\Models\User;
+use App\Models\Employee;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -30,7 +31,7 @@ class LoginRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => ['required', 'string', 'email'],
+            'employee_id' => ['required', 'string'],
             'password' => ['required', 'string'],
         ];
     }
@@ -60,7 +61,6 @@ class LoginRequest extends FormRequest
     public function authenticate()
     {
         $user = $this->getUserByEmployeeId();
-
         if (!$user || !$this->checkUserStatus($user) || !$this->attemptLogin($user)) {
             RateLimiter::hit($this->throttleKey());
             throw ValidationException::withMessages([
@@ -75,7 +75,6 @@ class LoginRequest extends FormRequest
     {
         if (strpos($this->employee_id, '@') !== false) {
             $user = User::where('email', $this->employee_id)->first();
-
             if (!$user) {
                 throw ValidationException::withMessages([
                     'employee_id' => __("Email doesn't exist."),
@@ -123,7 +122,7 @@ class LoginRequest extends FormRequest
             ]);
         }
 
-        return Auth::attempt(['email' => $this->employee_id, 'password' => $this->password, 'id' => $user->id], $this->boolean('remember'));
+        return Auth::attempt(['email' => $user->email, 'password' => $this->password, 'id' => $user->id], $this->boolean('remember'));
     }
 
     /**

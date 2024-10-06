@@ -25,6 +25,50 @@ endif;
 unset($__errorArgs, $__bag); ?>
             </div>
         </div>
+        <div class="col-lg-6 col-md-6 col-sm-6">
+            <div class="form-group">
+                <?php echo e(Form::label('branch_start_time', __('Branch Start Time'), ['class' => 'form-label'])); ?>
+
+                <div class="form-icon-user">
+                    <?php echo e(Form::time('branch_start_time', null, ['class' => 'form-control timepicker_format'])); ?>
+
+                </div>
+                <?php $__errorArgs = ['branch_start_time'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                    <span class="invalid-branch-start-time" role="alert">
+                        <strong class="text-danger"><?php echo e($message); ?></strong>
+                    </span>
+                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-6">
+            <div class="form-group">
+                <?php echo e(Form::label('branch_end_time', __('Branch End Time'), ['class' => 'form-label'])); ?>
+
+                <div class="form-icon-user">
+                    <?php echo e(Form::time('branch_end_time', null, ['class' => 'form-control timepicker_format'])); ?>
+
+                </div>
+                <?php $__errorArgs = ['branch_end_time'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                    <span class="invalid-branch-end-time" role="alert">
+                        <strong class="text-danger"><?php echo e($message); ?></strong>
+                    </span>
+                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+            </div>
+        </div>
     </div>
 </div>
 <div class="modal-footer">

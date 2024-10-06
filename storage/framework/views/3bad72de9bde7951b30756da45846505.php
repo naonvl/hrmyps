@@ -77,6 +77,7 @@
     <link rel="stylesheet" href="<?php echo e(asset('assets/css/plugins/main.css')); ?>">
 
     <link rel="stylesheet" href="<?php echo e(asset('assets/css/plugins/datepicker-bs5.min.css')); ?>">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
     <link rel="stylesheet" href="<?php echo e(asset('assets/css/plugins/style.css')); ?>">
     <!-- font css -->
     <link rel="stylesheet" href="<?php echo e(asset('assets/css/plugins/bootstrap-switch-button.min.css')); ?>">
@@ -114,6 +115,7 @@
 
     <link rel='stylesheet' href='https://unpkg.com/nprogress@0.2.0/nprogress.css' />
     <?php echo $__env->yieldPushContent('css-page'); ?>
+    <?php echo $__env->yieldContent('page-style'); ?>
 </head>
 
 

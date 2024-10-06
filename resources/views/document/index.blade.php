@@ -32,7 +32,8 @@
                         <thead>
                             <tr>
                                 <th>{{ __('Document') }}</th>
-                                <th>{{ __('Required Field') }}</th>
+                                <th>Wajib</th>
+                                <th>Perlu Approval</th>
                                 @if (Gate::check('Edit Document Type') || Gate::check('Delete Document Type'))
                                     <th width="200px">{{ __('Action') }}</th>
                                 @endif
@@ -44,11 +45,21 @@
                                     <td>{{ $document->name }}</td>
                                     <td>
                                         <h6 class="float-left mr-1">
-                                            @if ($document->is_required == 1)
-                                                <div class="badge bg-success p-2 px-3 rounded status-badge7">{{ __('Required') }}</div>
+                                            @if ($document->is_mandatory == 1)
+                                            <div class="badge bg-success p-2 px-3 rounded status-badge7">Ya</div>
                                             @else
-                                                <div class="badge bg-danger p-2 px-3 rounded status-badge7">{{ __('Not Required') }}
-                                                </div>
+                                            <div class="badge bg-danger p-2 px-3 rounded status-badge7">Tidak
+                                            </div>
+                                            @endif
+                                        </h6>
+                                    </td>
+                                    <td>
+                                        <h6 class="float-left mr-1">
+                                            @if ($document->need_approval == 1)
+                                            <div class="badge bg-success p-2 px-3 rounded status-badge7">Ya</div>
+                                            @else
+                                            <div class="badge bg-danger p-2 px-3 rounded status-badge7">Tidak
+                                            </div>
                                             @endif
                                         </h6>
                                     </td>

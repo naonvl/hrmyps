@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class DucumentUpload extends Model
+class DocumentUpload extends Model
 {
     protected $fillable = [
         'name',
@@ -12,6 +12,13 @@ class DucumentUpload extends Model
         'document',
         'description',
         'created_by',
+        'type',
+        'notes'
     ];
-    
+
+    public function documentByType()
+    {
+        return $this->belongsTo(Document::class, 'type', 'id');
+    }
 }
+

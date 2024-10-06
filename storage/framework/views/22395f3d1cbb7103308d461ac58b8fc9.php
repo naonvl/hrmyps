@@ -1856,59 +1856,7 @@ unset($__errorArgs, $__bag); ?>
 
                 </div>
 
-                <div class="card" id="pills-chatgpt-settings">
-                    <div class="col-md-12">
-                        <?php echo e(Form::model($settings, ['route' => 'settings.chatgptkey', 'method' => 'post'])); ?>
-
-                        <div class="card-header">
-                            <div class="row">
-                                <div class="col-lg-8 col-md-8 col-sm-8">
-                                    <h5 class="">
-                                        <?php echo e(__('Chat GPT Key Settings')); ?>
-
-                                    </h5>
-                                    <small><?php echo e(__('Edit your key details')); ?></small>
-                                </div>
-
-                                <div class="col-lg-4 col-md-4 col-sm-4 text-end">
-                                    <div class="col switch-width">
-                                        <div class="custom-control custom-switch">
-                                            <input type="checkbox" class="form-check-input" name="enable_chatgpt"
-                                                data-toggle="switchbutton" data-onstyle="primary" id="enable_chatgpt"
-                                                <?php echo e(isset($settings['enable_chatgpt']) && $settings['enable_chatgpt'] == 'on' ? 'checked="checked"' : ''); ?>>
-                                            <label class="custom-control-label form-label" for="enable_chatgpt"></label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="form-group col-md-6">
-                                    <?php echo e(Form::label('Chat GPT Key', __('Chat GPT Key'), ['class' => 'col-form-label'])); ?>
-
-                                    <?php echo e(Form::text('chatgpt_key', isset($settings['chatgpt_key']) ? $settings['chatgpt_key'] : '', ['class' => 'form-control', 'placeholder' => __('Enter Chatgpt Key Here')])); ?>
-
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <?php echo e(Form::label('Chat GPT Model', __('Chat GPT Model'), ['class' => 'col-form-label'])); ?>
-
-                                    <?php echo e(Form::text('chatgpt_model', isset($settings['chatgpt_model']) ? $settings['chatgpt_model'] : '', ['class' => 'form-control', 'placeholder' => __('Enter Chatgpt Model Here')])); ?>
-
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-footer text-end">
-                            <button class="btn-submit btn btn-primary" type="submit">
-                                <?php echo e(__('Save Changes')); ?>
-
-                            </button>
-                        </div>
-                        <?php echo e(Form::close()); ?>
-
-                    </div>
-                </div>
+                
 
             </div>
         </div>

@@ -47,7 +47,7 @@ use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\AssetController;
-use App\Http\Controllers\DucumentUploadController;
+use App\Http\Controllers\DocumentUploadController;
 use App\Http\Controllers\IndicatorController;
 use App\Http\Controllers\AppraisalController;
 use App\Http\Controllers\GoalTypeController;
@@ -898,12 +898,15 @@ Route::group(['middleware' => ['verified']], function () {
             'XSS',
         ]
     );
-    Route::resource('document-upload', DucumentUploadController::class)->middleware(
+    Route::get('document-upload/list', [DocumentUploadController::class, 'list'])->name('document-upload.list');
+    Route::resource('document-upload', DocumentUploadController::class)->middleware(
         [
             'auth',
             'XSS',
         ]
     );
+    Route::post('document-upload/approve', [DocumentUploadController::class, 'approve'])->name('document-upload.approve');
+    Route::post('document-upload/reject', [DocumentUploadController::class, 'reject'])->name('document-upload.reject');
     Route::resource('indicator', IndicatorController::class)->middleware(
         [
             'auth',

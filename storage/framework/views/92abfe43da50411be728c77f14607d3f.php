@@ -20,7 +20,7 @@
         <i class="ti ti-file"></i>
     </a>
     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Create Employee')): ?>
-        <a href="<?php echo e(route('employee.create')); ?>" 
+        <a href="<?php echo e(route('employee.create')); ?>"
             data-title="<?php echo e(__('Create New Employee')); ?>" data-bs-toggle="tooltip" title="" class="btn btn-sm btn-primary"
             data-bs-original-title="<?php echo e(__('Create')); ?>">
             <i class="ti ti-plus"></i>
@@ -55,9 +55,9 @@
                                     <td>
                                         <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Show Employee')): ?>
                                             <a class="btn btn-outline-primary"
-                                                href="<?php echo e(route('employee.show', \Illuminate\Support\Facades\Crypt::encrypt($employee->id))); ?>"><?php echo e(\Auth::user()->employeeIdFormat($employee->employee_id)); ?></a>
+                                                href="<?php echo e(route('employee.show', \Illuminate\Support\Facades\Crypt::encrypt($employee->id))); ?>"><?php echo e($employee->employee_id); ?></a>
                                         <?php else: ?>
-                                            <a href="#" class="btn btn-outline-primary"><?php echo e(\Auth::user()->employeeIdFormat($employee->employee_id)); ?></a>
+                                            <a href="#" class="btn btn-outline-primary"><?php echo e($employee->employee_id); ?></a>
                                         <?php endif; ?>
                                     </td>
                                     <td><?php echo e($employee->name); ?></td>

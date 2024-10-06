@@ -32,6 +32,8 @@
                             <thead>
                             <tr>
                                 <th>{{__('Branch')}}</th>
+                                <th>Jam Masuk</th>
+                                <th>Jam Keluar</th>
                                 <th width="200px">{{__('Action')}}</th>
                             </tr>
                             </thead>
@@ -39,6 +41,8 @@
                             @foreach ($branches as $branch)
                                 <tr>
                                     <td>{{ $branch->name }}</td>
+                                    <td>{{ $branch->branch_start_time }}</td>
+                                    <td>{{ $branch->branch_end_time }}</td>
                                     <td class="Action">
                                         <span>
                                             @can('Edit Branch')

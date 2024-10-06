@@ -21,11 +21,11 @@
         <form method="POST" action="{{ route('login') }}" class="needs-validation" novalidate="">
         @csrf
             <div class="form-group mb-3">
-                <label class="form-label">{{ __('Email') }}</label>
-                <input id="email" type="text" class="form-control  @error('email') is-invalid @enderror"
-                    name="email" placeholder="{{ __('Enter your email') }}"
+                <label class="form-label">NIK</label>
+                <input id="employee_id" type="text" class="form-control  @error('employee_id') is-invalid @enderror"
+                    name="employee_id" placeholder="NIK"
                     required autofocus>
-                @error('email')
+                @error('employee_id')
                     <span class="error invalid-email text-danger" role="alert">
                         <small>{{ $message }}</small>
                     </span>
@@ -49,16 +49,6 @@
                     @endif
                 </div>
             </div> --}}
-            @if(isset($settings['recaptcha_module']) && $settings['recaptcha_module'] == 'yes')
-                <div class="form-group mb-4">
-                    {!! NoCaptcha::display() !!}
-                    @error('g-recaptcha-response')
-                        <span class="error small text-danger" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                    @enderror
-                </div>
-            @endif
             <div class="d-grid">
                 <button class="btn btn-primary mt-2" type="submit">
                     {{ __('Login') }}
