@@ -7,6 +7,8 @@ use App\Models\Announcement;
 use App\Models\AttendanceEmployee;
 use App\Models\Employee;
 use App\Models\Event;
+use App\Models\Document;
+use App\Models\DocumentUpload;
 use App\Models\LandingPageSection;
 use App\Models\Meeting;
 use App\Models\Job;
@@ -52,7 +54,7 @@ class HomeController extends Controller
                 $employees = Employee::get();
                 $meetings  = Meeting::orderBy('meetings.id', 'desc')->take(5)->leftjoin('meeting_employees', 'meetings.id', '=', 'meeting_employees.meeting_id')->where('meeting_employees.employee_id', '=', $emp->id)->orWhere(
                     function ($q){
-                        $q->where('meetings.department_id', '["0"]')->where('meetings.employee_id', '["0"]'); 
+                        $q->where('meetings.department_id', '["0"]')->where('meetings.employee_id', '["0"]');
                     }
                 )->get();
 
@@ -64,7 +66,7 @@ class HomeController extends Controller
                         $q->where('events.department_id', '["0"]')->where('events.employee_id', '["0"]');
                     }
                 )->get();
-                
+
                 $arrEvents = [];
                 foreach($events as $event)
                 {
@@ -84,11 +86,27 @@ class HomeController extends Controller
                 $date               = date("Y-m-d");
                 $time               = date("H:i:s");
                 $employeeAttendance = AttendanceEmployee::orderBy('id', 'desc')->where('employee_id', '=', !empty(\Auth::user()->employee) ? \Auth::user()->employee->id : 0)->where('date', '=', $date)->first();
+                $user->employee->load('branch');
+                $branch = $user->employee->branch;
+                $officeTime['startTime'] = $branch->branch_start_time;
+                $officeTime['endTime']   = $branch->branch_end_time;
+                $documents = Document::where('is_mandatory', true)->select('name','id')->get();
+                $documentIds = $documents->pluck('id')->toArray();
+                $documentUploads = DocumentUpload::with('documentType')->where('created_by', $user->employee->id)->whereIn('type', $documentIds)->get();
+                $hasPending = $documentUploads->count() > 0 ? false : true;
+                foreach($documentIds as $doc){
+                    $document = $documentUploads->where('type', $doc)->first();
+                    if($document){
 
-                $officeTime['startTime'] = Utility::getValByName('company_start_time');
-                $officeTime['endTime']   = Utility::getValByName('company_end_time');
-
-                return view('dashboard.dashboard', compact('arrEvents', 'announcements', 'employees', 'meetings', 'employeeAttendance', 'officeTime'));
+                        if($document->status != 'approved'){
+                            $hasPending = true;
+                            break;
+                        }
+                    } else {
+                        $hasPending = true;
+                    }
+                }
+                return view('dashboard.dashboard', compact('arrEvents', 'announcements', 'employees', 'meetings', 'employeeAttendance','documents','documentUploads', 'officeTime','hasPending'));
             }
             else
             {
@@ -129,7 +147,7 @@ class HomeController extends Controller
 
                 $notClockIns    = Employee::where('created_by', '=', \Auth::user()->creatorId())->whereNotIn('id', $notClockIn)->get();
                 $accountBalance = AccountList::where('created_by', '=', \Auth::user()->creatorId())->sum('initial_balance');
-                
+
                 $activeJob   = Job::where('status', 'active')->where('created_by', '=', \Auth::user()->creatorId())->count();
                 $inActiveJOb = Job::where('status', 'in_active')->where('created_by', '=', \Auth::user()->creatorId())->count();
 

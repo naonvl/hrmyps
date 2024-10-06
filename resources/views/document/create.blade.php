@@ -19,9 +19,9 @@
 
         <div class="col-lg-12 col-md-12 col-sm-12">
             <div class="form-group">
-                {{ Form::label('is_required', 'Dokumen Wajib', ['class' => 'form-label']) }}
+                {{ Form::label('is_mandatory', 'Dokumen Wajib', ['class' => 'form-label']) }}
                 <div class="form-icon-user">
-                    {{ Form::select('is_required', ['0'=>'Tidak' ,'1'=>'Ya'], null, ['class' => 'form-control select2 ','placeholder' => 'Pilih Data']) }}
+                    {{ Form::select('is_mandatory', ['0'=>'Tidak' ,'1'=>'Ya'], null, ['class' => 'form-control select2 ','placeholder' => 'Pilih Data']) }}
                 </div>
             </div>
         </div>

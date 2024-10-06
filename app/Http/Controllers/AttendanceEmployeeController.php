@@ -12,7 +12,8 @@ use App\Models\User;
 use App\Models\Utility;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 class AttendanceEmployeeController extends Controller
 {
     public function index(Request $request)
@@ -60,7 +61,7 @@ class AttendanceEmployeeController extends Controller
                     $year       = date('Y');
                     $start_date = date($year . '-' . $month . '-01');
                     $end_date = date('Y-m-t', strtotime('01-'.$month.'-'.$year));
-                    
+
                     // old date
                     // $end_date   = date($year . '-' . $month . '-t');
 
@@ -98,7 +99,7 @@ class AttendanceEmployeeController extends Controller
 
                     $start_date = date($year . '-' . $month . '-01');
                     $end_date = date('Y-m-t', strtotime('01-'.$month.'-'.$year));
-                    
+
                     // old date
                     // $end_date   = date($year . '-' . $month . '-t');
 
@@ -119,7 +120,7 @@ class AttendanceEmployeeController extends Controller
                     $year       = date('Y');
                     $start_date = date($year . '-' . $month . '-01');
                     $end_date = date('Y-m-t', strtotime('01-'.$month.'-'.$year));
-                    
+
                     // olda date
                     // $end_date   = date($year . '-' . $month . '-t');
 
@@ -266,19 +267,19 @@ class AttendanceEmployeeController extends Controller
     //     if (\Auth::user()->type == 'company' || \Auth::user()->type == 'hr') {
     //         $employeeId      = AttendanceEmployee::where('employee_id', $request->employee_id)->first();
     //         $check = AttendanceEmployee::where('employee_id', '=', $request->employee_id)->where('date', $request->date)->first();
-            
+
     //         $startTime = Utility::getValByName('company_start_time');
     //         $endTime   = Utility::getValByName('company_end_time');
-            
+
     //         $clockIn = $request->clock_in;
     //         $clockOut = $request->clock_out;
-            
+
     //         if ($clockIn) {
     //             $status = "present";
     //         } else {
     //             $status = "leave";
     //         }
-            
+
     //         $totalLateSeconds = strtotime($clockIn) - strtotime($startTime);
 
     //         $hours = floor($totalLateSeconds / 3600);
@@ -662,16 +663,16 @@ class AttendanceEmployeeController extends Controller
 
         if ($settings['ip_restrict'] == 'on') {
             $userIp = request()->ip();
-            $ip     = IpRestrict::where('created_by', \Auth::user()->creatorId())->whereIn('ip', [$userIp])->first();
+            $ip = IpRestrict::where('created_by', \Auth::user()->creatorId())->whereIn('ip', [$userIp])->first();
             if (!empty($ip)) {
                 return redirect()->back()->with('error', __('This ip is not allowed to clock in & clock out.'));
             }
         }
 
         $employeeId = !empty(\Auth::user()->employee) ? \Auth::user()->employee->id : 0;
-
-        $startTime = Utility::getValByName('company_start_time');
-        $endTime = Utility::getValByName('company_end_time');
+        $branch = \Auth::user()->employee->branch;
+        $startTime = $branch->branch_start_time;
+        $endTime = $branch->branch_end_time;
 
         // Find the last clocked out entry for the employee
         $lastClockOutEntry = AttendanceEmployee::orderBy('id', 'desc')
@@ -682,6 +683,17 @@ class AttendanceEmployeeController extends Controller
 
         $date = date("Y-m-d");
         $time = date("H:i:s");
+        // Generate a timestamp-based filename
+        $timestamp = Carbon::now()->format('YmdHisU');
+        $fileName = $timestamp . '.jpg';
+        // Decode and save the Base64 image
+        $imageData = $this->base64ToImage($request->input('clockin_photo'));
+        $filePath = 'public/uploads/attendances/' . $fileName;
+
+        Storage::put($filePath, $imageData);
+
+        // Get the public URL of the stored file
+        $clockinPhotoUrl = Storage::url($filePath);
 
         if ($lastClockOutEntry != null) {
             // Calculate late based on the difference between the last clock-out time and the current clock-in time
@@ -713,8 +725,8 @@ class AttendanceEmployeeController extends Controller
             $late = sprintf('%02d:%02d:%02d', $hours, $mins, $secs);
         }
 
-        $checkDb = AttendanceEmployee::where('employee_id', '=', \Auth::user()->id)->get()->toArray();
 
+        $checkDb = AttendanceEmployee::where('employee_id', '=', \Auth::user()->id)->get()->toArray();
         if (empty($checkDb)) {
             $employeeAttendance                = new AttendanceEmployee();
             $employeeAttendance->employee_id   = $employeeId;
@@ -750,6 +762,22 @@ class AttendanceEmployeeController extends Controller
 
             return redirect()->back()->with('success', __('Employee Successfully Clock In.'));
         }
+    }
+    function base64ToImage($base64String)
+    {
+        // Validate the Base64 string
+        if (preg_match('/^data:image\/(\w+);base64,/', $base64String, $type)) {
+            $data = substr($base64String, strpos($base64String, ',') + 1);
+            $data = base64_decode($data);
+
+            if ($data === false) {
+                throw new \Exception('Base64 decoding failed');
+            }
+
+            return $data; // Return the decoded image data
+        }
+
+        throw new \Exception('Invalid base64 image string');
     }
 
     public function bulkAttendance(Request $request)

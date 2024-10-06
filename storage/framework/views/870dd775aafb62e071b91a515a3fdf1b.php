@@ -9,20 +9,17 @@
 
 ?>
 <?php $__env->startSection('content'); ?>
-
-<div class="card-body">
-    <img src="<?php echo e($logos . '/' . (isset($logo) && !empty($logo) ? $logo . '?' . time() : 'logo-dark.png' . '?' . time())); ?>"
-    class="logo mx-auto" alt="<?php echo e(config('app.name', 'HRM-YPS')); ?>" alt="logo"
-    loading="lazy" style="max-height: 50px;" />
-    <div>
-        <h2 class="mb-3 f-w-600"><?php echo e(__('Login')); ?></h2>
-    </div>
-    <div class="custom-login-form">
-        <form method="POST" action="<?php echo e(route('login')); ?>" class="needs-validation" novalidate="">
-        <?php echo csrf_field(); ?>
-            <div class="form-group mb-3">
-                <label class="form-label">NIK</label>
-                <input id="employee_id" type="text" class="form-control  <?php $__errorArgs = ['employee_id'];
+    <div class="card-body">
+        <img src="<?php echo e($logos . '/' . (isset($logo) && !empty($logo) ? $logo . '?' . time() : 'logo-dark.png' . '?' . time())); ?>"
+            class="logo mx-auto" alt="<?php echo e(config('app.name', 'HRM-YPS')); ?>" alt="logo" loading="lazy"
+            style="max-height: 50px;" />
+            <h2 class="my-3 f-w-600 text-center"><?php echo e(__('Login')); ?></h2>
+        <div class="custom-login-form">
+            <form method="POST" action="<?php echo e(route('login')); ?>" class="needs-validation" novalidate="">
+                <?php echo csrf_field(); ?>
+                <div class="form-group mb-3">
+                    <label class="form-label">NIK</label>
+                    <input id="employee_id" type="text" class="form-control  <?php $__errorArgs = ['employee_id'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
@@ -30,54 +27,54 @@ $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
-                    name="employee_id" placeholder="NIK"
-                    required autofocus>
-                <?php $__errorArgs = ['employee_id'];
+                        name="employee_id" placeholder="NIK" required autofocus>
+                    <?php $__errorArgs = ['employee_id'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?>
-                    <span class="error invalid-email text-danger" role="alert">
-                        <small><?php echo e($message); ?></small>
-                    </span>
-                <?php unset($message);
+                        <span class="error invalid-email text-danger" role="alert">
+                            <small><?php echo e($message); ?></small>
+                        </span>
+                    <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
-            </div>
-            <div class="form-group mb-3 pss-field">
-                <label class="form-label"><?php echo e(__('Password')); ?></label>
-                <input id="password" type="password" class="form-control  <?php $__errorArgs = ['password'];
+                </div>
+                <div class="form-group mb-3 pss-field">
+                    <label class="form-label"><?php echo e(__('Password')); ?></label>
+                    <input id="password" type="password" class="form-control  <?php $__errorArgs = ['password'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
-unset($__errorArgs, $__bag); ?>" name="password" placeholder="<?php echo e(__('Password')); ?>" required>
-                <?php $__errorArgs = ['password'];
+unset($__errorArgs, $__bag); ?>"
+                        name="password" placeholder="<?php echo e(__('Password')); ?>" required>
+                    <?php $__errorArgs = ['password'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?>
-                    <span class="error invalid-password text-danger" role="alert">
-                        <small><?php echo e($message); ?></small>
-                    </span>
-                <?php unset($message);
+                        <span class="error invalid-password text-danger" role="alert">
+                            <small><?php echo e($message); ?></small>
+                        </span>
+                    <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
-            </div>
-            
-            <div class="d-grid">
-                <button class="btn btn-primary mt-2" type="submit">
-                    <?php echo e(__('Login')); ?>
+                </div>
+                
+                <div class="d-grid">
+                    <button class="btn btn-primary mt-2" type="submit">
+                        <?php echo e(__('Login')); ?>
 
-                </button>
-            </div>
-        </form>
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 <?php $__env->stopSection(); ?>
 <?php $__env->startPush('custom-scripts'); ?>
     <script src="<?php echo e(asset('custom/libs/jquery/dist/jquery.min.js')); ?>"></script>

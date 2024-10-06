@@ -58,59 +58,100 @@
                 <div class="card-body">
                     <p class="text-muted pb-0-5">
                         {{ __('My Office Time: ' . $officeTime['startTime'] . ' to ' . $officeTime['endTime']) }}</p>
-                    <div class="row">
-                        <div class="col-md-6 float-right border-right">
-                            @if (empty($employeeAttendance) || $employeeAttendance->clock_out != '00:00:00')
-                                {{-- <button type="submit" value="0" name="in" id="clock_in"
+                    @if ($hasPending)
+                        @php
+                            $pendingDoc = $documentUploads->where('status', 'pending')->first();
+                            $rejectedDoc = $documentUploads->where('status', 'rejected')->first();
+                        @endphp
+                        @if ($pendingDoc)
+                            <div class="alert alert-warning text-center" role="alert">
+                                Beberapa dokumen masih menunggu untuk disetujui!
+                            </div>
+                        @elseif ($rejectedDoc)
+                            <div class="alert alert-danger text-center" role="alert">
+                                Ada dokumen yang di tolak, silahkan upload ulang dokumen!
+                            </div>
+                        @else
+                            <div class="alert alert-warning text-center" role="alert">
+                                Silahkan upload dokumen-dokumen wajib sebelum melakukan absen!
+                            </div>
+                        @endif
+                        <div class="d-flex justify-content-center">
+                            @foreach ($documents as $doc)
+                                @php
+                                    $document = $documentUploads->where('type', $doc->id)->first();
+                                @endphp
+                                @if ($document)
+                                    @if ($document->status == 'approved')
+                                        ✅
+                                    @elseif($document->status == 'rejected')
+                                        ❌
+                                    @else
+                                        ⌛
+                                    @endif
+                                @else
+                                ❌
+                                @endif
+                                {{ $doc->name }}
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="row">
+                            <div class="col-md-6 float-right border-right">
+                                @if (empty($employeeAttendance) || $employeeAttendance->clock_out != '00:00:00')
+                                    {{-- <button type="submit" value="0" name="in" id="clock_in"
                                     class="btn btn-primary">{{ __('CLOCK IN') }}</button> --}}
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                    data-bs-target="#clockInModal">{{ __('CLOCK IN') }}</button>
-                                <div class="modal fade" id="clockInModal" tabindex="-1" aria-labelledby="clockInModalLabel"
-                                    aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-                                    <div class="modal-dialog modal-fullscreen-sm-down">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="clockInModalLabel">{{ __('Clock In') }}</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                {{ Form::open(['url' => 'attendanceemployee/attendance', 'method' => 'post', 'enctype' => 'multipart/form-data']) }}
-                                                <video id="video" width="100%" height="420" autoplay></video>
-                                                <canvas id="canvas" width="100%" height="420"
-                                                    style="display: none;"></canvas>
-                                                <button type="button" class="btn btn-primary w-100" id="snap"
-                                                    style="margin-top: 10px;">Take Picture</button>
-                                                <button type="button" class="d-none btn btn-primary w-100" id="re-snap"
-                                                    style="margin-top: 10px;">Retake</button>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-bs-dismiss="modal">{{ __('Close') }}</button>
-                                                <a href="{{ route('attendanceemployee.attendance') }}"
-                                                    class="btn btn-primary">{{ __('Clock In') }}</a>
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#clockInModal">{{ __('CLOCK IN') }}</button>
+                                    <div class="modal fade" id="clockInModal" tabindex="-1"
+                                        aria-labelledby="clockInModalLabel" aria-hidden="true" data-bs-backdrop="static"
+                                        data-bs-keyboard="false">
+                                        <div class="modal-dialog modal-fullscreen-sm-down">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="clockInModalLabel">{{ __('Clock In') }}
+                                                    </h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    {{ Form::open(['url' => 'attendanceemployee/attendance', 'method' => 'post', 'enctype' => 'multipart/form-data']) }}
+                                                    <video id="video" width="100%" height="420" autoplay></video>
+                                                    <canvas id="canvas" width="100%" height="420"
+                                                        style="display: none;"></canvas>
+                                                    <button type="button" class="btn btn-primary w-100" id="snap"
+                                                        style="margin-top: 10px;">Take Picture</button>
+                                                    <button type="button" class="d-none btn btn-secondary w-100"
+                                                        id="re-snap" style="margin-top: 10px;">Retake</button>
+                                                    <input type="hidden" name="clockin_photo" id="clockin_photo">
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">{{ __('Close') }}</button>
+                                                    <button type="submit" class="btn btn-primary" id="clock-in">{{ __('Clock In') }}</button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            @else
-                                <button type="submit" value="0" name="in" id="clock_in"
-                                    class="btn btn-primary disabled" disabled>{{ __('CLOCK IN') }}</button>
-                            @endif
-                            {{ Form::close() }}
+                                @else
+                                    <button type="submit" value="0" name="in" id="clock_in"
+                                        class="btn btn-primary disabled" disabled>{{ __('CLOCK IN') }}</button>
+                                @endif
+                                {{ Form::close() }}
+                            </div>
+                            <div class="col-md-6 float-left">
+                                @if (!empty($employeeAttendance) && $employeeAttendance->clock_out == '00:00:00')
+                                    {{ Form::model($employeeAttendance, ['route' => ['attendanceemployee.update', $employeeAttendance->id], 'method' => 'PUT']) }}
+                                    <button type="submit" value="1" name="out" id="clock_out"
+                                        class="btn btn-danger">{{ __('CLOCK OUT') }}</button>
+                                @else
+                                    <button type="submit" value="1" name="out" id="clock_out"
+                                        class="btn btn-danger disabled" disabled>{{ __('CLOCK OUT') }}</button>
+                                @endif
+                                {{ Form::close() }}
+                            </div>
                         </div>
-                        <div class="col-md-6 float-left">
-                            @if (!empty($employeeAttendance) && $employeeAttendance->clock_out == '00:00:00')
-                                {{ Form::model($employeeAttendance, ['route' => ['attendanceemployee.update', $employeeAttendance->id], 'method' => 'PUT']) }}
-                                <button type="submit" value="1" name="out" id="clock_out"
-                                    class="btn btn-danger">{{ __('CLOCK OUT') }}</button>
-                            @else
-                                <button type="submit" value="1" name="out" id="clock_out"
-                                    class="btn btn-danger disabled" disabled>{{ __('CLOCK OUT') }}</button>
-                            @endif
-                            {{ Form::close() }}
-                        </div>
-                    </div>
+                    @endif
                 </div>
             </div>
             <div class="card" style="height: 462px;">
@@ -471,7 +512,7 @@
                 ctx.restore();
 
                 var dataURL = canvas.toDataURL('image/png');
-                console.log(dataURL);
+                document.getElementById('clockin_photo').value = dataURL;
                 document.getElementById('snap').classList.add('d-none');
                 document.getElementById('re-snap').classList.remove('d-none');
             });

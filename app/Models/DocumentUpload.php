@@ -16,9 +16,13 @@ class DocumentUpload extends Model
         'notes'
     ];
 
-    public function documentByType()
+    public function documentType()
     {
         return $this->belongsTo(Document::class, 'type', 'id');
+    }
+    public function createdBy()
+    {
+        return $this->belongsTo(Employee::class, 'created_by', 'id');
     }
 }
 

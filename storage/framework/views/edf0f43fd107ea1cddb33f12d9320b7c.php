@@ -29,10 +29,10 @@ unset($__errorArgs, $__bag); ?>
 
         <div class="col-lg-12 col-md-12 col-sm-12">
             <div class="form-group">
-                <?php echo e(Form::label('is_required', __('Required Field'), ['class' => 'form-label'])); ?>
+                <?php echo e(Form::label('is_mandatory', 'Dokumen Wajib', ['class' => 'form-label'])); ?>
 
                 <div class="form-icon-user">
-                    <?php echo e(Form::select('is_required', ['0'=>'Tidak' ,'1'=>'Ya'], null, ['class' => 'form-control select2 ','placeholder' => 'Pilih Data'])); ?>
+                    <?php echo e(Form::select('is_mandatory', ['0'=>'Tidak' ,'1'=>'Ya'], null, ['class' => 'form-control select2 ','placeholder' => 'Pilih Data'])); ?>
 
                 </div>
             </div>

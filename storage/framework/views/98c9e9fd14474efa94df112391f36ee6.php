@@ -31,7 +31,7 @@ unset($__errorArgs, $__bag); ?>
                 <?php echo e(Form::label('is_mandatory','Dokumen Wajib', ['class' => 'form-label'])); ?>
 
                 <div class="form-icon-user">
-                    <?php echo e(Form::select('is_mandatory', ['0'=>'Not Required' ,'1'=>'Is Required'], null, ['class' => 'form-control select2 ','placeholder' => __('Select Department')])); ?>
+                    <?php echo e(Form::select('is_mandatory', ['0'=>'Tidak' ,'1'=>'Ya'], null, ['class' => 'form-control select2 ','placeholder' => __('Select Department')])); ?>
 
                 </div>
             </div>
@@ -41,7 +41,7 @@ unset($__errorArgs, $__bag); ?>
                 <?php echo e(Form::label('need_approval','Diperlukan Approval', ['class' => 'form-label'])); ?>
 
                 <div class="form-icon-user">
-                    <?php echo e(Form::select('need_approval', ['0'=>'Not Required' ,'1'=>'Is Required'], null, ['class' => 'form-control select2 ','placeholder' => __('Select Department')])); ?>
+                    <?php echo e(Form::select('need_approval', ['0'=>'Tidak' ,'1'=>'Ya'], null, ['class' => 'form-control select2 ','placeholder' => __('Select Department')])); ?>
 
                 </div>
             </div>

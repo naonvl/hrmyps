@@ -30,7 +30,7 @@ unset($__errorArgs, $__bag); ?>
                 <?php echo e(Form::label('branch_start_time', __('Branch Start Time'), ['class' => 'form-label'])); ?>
 
                 <div class="form-icon-user">
-                    <?php echo e(Form::time('branch_start_time', null, ['class' => 'form-control timepicker_format'])); ?>
+                    <?php echo e(Form::time('branch_start_time', '08:00', ['class' => 'form-control timepicker_format'])); ?>
 
                 </div>
                 <?php $__errorArgs = ['branch_start_time'];
@@ -52,7 +52,7 @@ unset($__errorArgs, $__bag); ?>
                 <?php echo e(Form::label('branch_end_time', __('Branch End Time'), ['class' => 'form-label'])); ?>
 
                 <div class="form-icon-user">
-                    <?php echo e(Form::time('branch_end_time', null, ['class' => 'form-control timepicker_format'])); ?>
+                    <?php echo e(Form::time('branch_end_time', '17:00', ['class' => 'form-control timepicker_format'])); ?>
 
                 </div>
                 <?php $__errorArgs = ['branch_end_time'];

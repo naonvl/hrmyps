@@ -56,62 +56,105 @@
                 <div class="card-body">
                     <p class="text-muted pb-0-5">
                         <?php echo e(__('My Office Time: ' . $officeTime['startTime'] . ' to ' . $officeTime['endTime'])); ?></p>
-                    <div class="row">
-                        <div class="col-md-6 float-right border-right">
-                            <?php if(empty($employeeAttendance) || $employeeAttendance->clock_out != '00:00:00'): ?>
-                                
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                    data-bs-target="#clockInModal"><?php echo e(__('CLOCK IN')); ?></button>
-                                <div class="modal fade" id="clockInModal" tabindex="-1" aria-labelledby="clockInModalLabel"
-                                    aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-                                    <div class="modal-dialog modal-fullscreen-sm-down">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="clockInModalLabel"><?php echo e(__('Clock In')); ?></h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <?php echo e(Form::open(['url' => 'attendanceemployee/attendance', 'method' => 'post', 'enctype' => 'multipart/form-data'])); ?>
+                    <?php if($hasPending): ?>
+                        <?php
+                            $pendingDoc = $documentUploads->where('status', 'pending')->first();
+                            $rejectedDoc = $documentUploads->where('status', 'rejected')->first();
+                        ?>
+                        <?php if($pendingDoc): ?>
+                            <div class="alert alert-warning text-center" role="alert">
+                                Beberapa dokumen masih menunggu untuk disetujui!
+                            </div>
+                        <?php elseif($rejectedDoc): ?>
+                            <div class="alert alert-danger text-center" role="alert">
+                                Ada dokumen yang di tolak, silahkan upload ulang dokumen!
+                            </div>
+                        <?php else: ?>
+                            <div class="alert alert-warning text-center" role="alert">
+                                Silahkan upload dokumen-dokumen wajib sebelum melakukan absen!
+                            </div>
+                        <?php endif; ?>
+                        <div class="d-flex justify-content-center">
+                            <?php $__currentLoopData = $documents; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $doc): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <?php
+                                    $document = $documentUploads->where('type', $doc->id)->first();
+                                ?>
+                                <?php if($document): ?>
+                                    <?php if($document->status == 'approved'): ?>
+                                        ✅
+                                    <?php elseif($document->status == 'rejected'): ?>
+                                        ❌
+                                    <?php else: ?>
+                                        ⌛
+                                    <?php endif; ?>
+                                <?php else: ?>
+                                ❌
+                                <?php endif; ?>
+                                <?php echo e($doc->name); ?>
 
-                                                <video id="video" width="100%" height="420" autoplay></video>
-                                                <canvas id="canvas" width="100%" height="420"
-                                                    style="display: none;"></canvas>
-                                                <button type="button" class="btn btn-primary w-100" id="snap"
-                                                    style="margin-top: 10px;">Take Picture</button>
-                                                <button type="button" class="d-none btn btn-primary w-100" id="re-snap"
-                                                    style="margin-top: 10px;">Retake</button>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-bs-dismiss="modal"><?php echo e(__('Close')); ?></button>
-                                                <a href="<?php echo e(route('attendanceemployee.attendance')); ?>"
-                                                    class="btn btn-primary"><?php echo e(__('Clock In')); ?></a>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </div>
+                    <?php else: ?>
+                        <div class="row">
+                            <div class="col-md-6 float-right border-right">
+                                <?php if(empty($employeeAttendance) || $employeeAttendance->clock_out != '00:00:00'): ?>
+                                    
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#clockInModal"><?php echo e(__('CLOCK IN')); ?></button>
+                                    <div class="modal fade" id="clockInModal" tabindex="-1"
+                                        aria-labelledby="clockInModalLabel" aria-hidden="true" data-bs-backdrop="static"
+                                        data-bs-keyboard="false">
+                                        <div class="modal-dialog modal-fullscreen-sm-down">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="clockInModalLabel"><?php echo e(__('Clock In')); ?>
+
+                                                    </h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <?php echo e(Form::open(['url' => 'attendanceemployee/attendance', 'method' => 'post', 'enctype' => 'multipart/form-data'])); ?>
+
+                                                    <video id="video" width="100%" height="420" autoplay></video>
+                                                    <canvas id="canvas" width="100%" height="420"
+                                                        style="display: none;"></canvas>
+                                                    <button type="button" class="btn btn-primary w-100" id="snap"
+                                                        style="margin-top: 10px;">Take Picture</button>
+                                                    <button type="button" class="d-none btn btn-secondary w-100"
+                                                        id="re-snap" style="margin-top: 10px;">Retake</button>
+                                                    <input type="hidden" name="clockin_photo" id="clockin_photo">
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal"><?php echo e(__('Close')); ?></button>
+                                                    <button type="submit" class="btn btn-primary" id="clock-in"><?php echo e(__('Clock In')); ?></button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            <?php else: ?>
-                                <button type="submit" value="0" name="in" id="clock_in"
-                                    class="btn btn-primary disabled" disabled><?php echo e(__('CLOCK IN')); ?></button>
-                            <?php endif; ?>
-                            <?php echo e(Form::close()); ?>
+                                <?php else: ?>
+                                    <button type="submit" value="0" name="in" id="clock_in"
+                                        class="btn btn-primary disabled" disabled><?php echo e(__('CLOCK IN')); ?></button>
+                                <?php endif; ?>
+                                <?php echo e(Form::close()); ?>
 
+                            </div>
+                            <div class="col-md-6 float-left">
+                                <?php if(!empty($employeeAttendance) && $employeeAttendance->clock_out == '00:00:00'): ?>
+                                    <?php echo e(Form::model($employeeAttendance, ['route' => ['attendanceemployee.update', $employeeAttendance->id], 'method' => 'PUT'])); ?>
+
+                                    <button type="submit" value="1" name="out" id="clock_out"
+                                        class="btn btn-danger"><?php echo e(__('CLOCK OUT')); ?></button>
+                                <?php else: ?>
+                                    <button type="submit" value="1" name="out" id="clock_out"
+                                        class="btn btn-danger disabled" disabled><?php echo e(__('CLOCK OUT')); ?></button>
+                                <?php endif; ?>
+                                <?php echo e(Form::close()); ?>
+
+                            </div>
                         </div>
-                        <div class="col-md-6 float-left">
-                            <?php if(!empty($employeeAttendance) && $employeeAttendance->clock_out == '00:00:00'): ?>
-                                <?php echo e(Form::model($employeeAttendance, ['route' => ['attendanceemployee.update', $employeeAttendance->id], 'method' => 'PUT'])); ?>
-
-                                <button type="submit" value="1" name="out" id="clock_out"
-                                    class="btn btn-danger"><?php echo e(__('CLOCK OUT')); ?></button>
-                            <?php else: ?>
-                                <button type="submit" value="1" name="out" id="clock_out"
-                                    class="btn btn-danger disabled" disabled><?php echo e(__('CLOCK OUT')); ?></button>
-                            <?php endif; ?>
-                            <?php echo e(Form::close()); ?>
-
-                        </div>
-                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
             <div class="card" style="height: 462px;">
@@ -472,7 +515,7 @@
                 ctx.restore();
 
                 var dataURL = canvas.toDataURL('image/png');
-                console.log(dataURL);
+                document.getElementById('clockin_photo').value = dataURL;
                 document.getElementById('snap').classList.add('d-none');
                 document.getElementById('re-snap').classList.remove('d-none');
             });

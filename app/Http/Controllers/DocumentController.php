@@ -54,6 +54,7 @@ class DocumentController extends Controller
             $document              = new Document();
             $document->name        = $request->name;
             $document->is_mandatory = $request->is_mandatory;
+            $document->need_approval = $request->need_approval;
             $document->created_by  = \Auth::user()->creatorId();
             $document->save();
 

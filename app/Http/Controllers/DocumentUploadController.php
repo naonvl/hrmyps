@@ -11,33 +11,29 @@ class DocumentUploadController extends Controller
 {
 
     public function index()
-    {
-        if (\Auth::user()->can('Manage Document')) {
-            if (\Auth::user()->type == 'company' || \Auth::user()->type == 'hr') {
-                $documents = DocumentUpload::where('created_by', \Auth::user()->creatorId())->get();
-            } else {
-                $userRole  = \Auth::user()->roles->first();
-                $documents = DocumentUpload::whereIn(
-                    'role',
-                    [
-                        $userRole->id,
-                        0,
-                    ]
-                )->where('created_by', \Auth::user()->creatorId())->get();
-            }
-
-            return view('documentUpload.index', compact('documents'));
+{
+    if (\Auth::user()->can('Manage Document')) {
+        if (\Auth::user()->type == 'company' || \Auth::user()->type == 'hr') {
+            $documents = DocumentUpload::orderBy('id', 'desc')->get();
         } else {
-            return redirect()->back()->with('error', __('Permission denied.'));
+            $documents = DocumentUpload::where('created_by', \Auth::user()->id)
+                ->with('createdBy')
+                ->orderBy('id', 'desc')
+                ->get();
         }
+
+        return view('documentUpload.index', compact('documents'));
+    } else {
+        return redirect()->back()->with('error', __('Permission denied.'));
     }
+}
+
 
     public function list(Request $request)
     {
         $limit = $request->get('length', 10);
         $start = $request->get('start', 0);
-        $search = $request->get('search.value');
-
+        $search = $request->input('search.value');
         $query = DocumentUpload::query();
 
         if (\Auth::user()->type != 'hr') {
@@ -46,10 +42,9 @@ class DocumentUploadController extends Controller
 
         if (isset($search)) {
             $query->where(function ($query) use ($search) {
-                $query->where('employee_id', 'LIKE', "%{$search}%")
-                    ->orWhere('document_id', 'LIKE', "%{$search}%")
-                    ->orWhere('role', 'LIKE', "%{$search}%")
-                    ->orWhere('status', 'LIKE', "%{$search}%");
+                $query->where('name', 'LIKE', "%{$search}%")
+                    ->orWhere('description', 'LIKE', "%{$search}%")
+                    ->orWhere('notes', 'LIKE', "%{$search}%");
             });
         }
 
@@ -65,37 +60,42 @@ class DocumentUploadController extends Controller
     public function create()
     {
         if (\Auth::user()->can('Create Document')) {
-            $types = Document::get()->pluck('name', 'id');
-            $types->prepend('Pilih Tipe', 'null');
+            $documentUploads = DocumentUpload::with('documentType')->where('created_by', \Auth::user()->employee->id)->whereIn('type', function($query) {
+                $query->select('id')->from('documents')->where('is_mandatory', true);
+            })->where('status','!=' ,'rejected')->get()->pluck('documentType.id')->toArray();
+            $types = Document::whereNotIn('id',$documentUploads)->get()->pluck('name', 'id');
+            $types->prepend('Pilih Tipe', '0');
 
             return view('documentUpload.create', compact('types'));
         } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }
     }
-    public function approve()
+    public function approve(Request $request)
     {
-        if (\Auth::user()->can('Create Document')) {
-            $types = Document::get()->pluck('name', 'id');
-            $types->prepend('Pilih Tipe', 'null');
-
-            return view('documentUpload.create', compact('types'));
+        if (\Auth::user()->type == 'hr') {
+            $documentUpload = DocumentUpload::find($request->id);
+            $documentUpload->status= 'approved';
+            $documentUpload->save();
+            return response()->json(['success' => true]);
         } else {
-            return redirect()->back()->with('error', __('Permission denied.'));
+            return response()->json(['success' => false, 'error' => __('Permission denied.')]);
         }
     }
 
-    public function reject()
+    public function reject(Request $request)
     {
-        if (\Auth::user()->can('Create Document')) {
-            $types = Document::get()->pluck('name', 'id');
-            $types->prepend('Pilih Tipe', 'null');
-
-            return view('documentUpload.create', compact('types'));
+        if (\Auth::user()->type == 'hr') {
+            $documentUpload = DocumentUpload::find($request->id);
+            $documentUpload->status= 'rejected';
+            $documentUpload->notes= $request->notes;
+            $documentUpload->save();
+            return response()->json(['success' => true]);
         } else {
-            return redirect()->back()->with('error', __('Permission denied.'));
+            return response()->json(['success' => false, 'error' => __('Permission denied.')]);
         }
     }
+
 
 
     public function store(Request $request)
@@ -139,7 +139,9 @@ class DocumentUploadController extends Controller
             $document              = new DocumentUpload();
             $document->name        = $request->name;
             $document->document    = !empty($request->documents) ? $fileNameToStore : '';
-            $document->role        = $request->role;
+            $document->role        = 0;
+            $document->status        = Document::find($request->type)->need_approval ? 'pending' : 'approved';
+            $document->type        = $request->type;
             $document->description = $request->description;
             $document->created_by  = \Auth::user()->creatorId();
             $document->save();

@@ -183,7 +183,7 @@
             <div class="row">
                 <div class="col-sm-12 col-md-6">
 
-                    <div class="card " style="height:200px">
+                    <div class="card ">
                         <div class="card-body employee-detail-body fulls-card">
                             <h5>{{ __('Document Detail') }}</h5>
                             <hr>
@@ -196,15 +196,40 @@
                                 <table class="datatable table-bordered">
                                     <thead>
                                         <tr>
-                                            <th>{{ __('Type') }}</th>
-                                            <th>{{ __('Document Name') }}</th>
+                                            <th>Nama</th>
+                                            <th>Dokumen</th>
+                                            <th>Deskripsi</th>
+                                            <th>Status</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach ($documentUploads as $key => $document)
                                             <tr>
                                                 <td>{{ $document->name }}</td>
-                                                <td>{{ $document->typ }}</td>
+                                                <td>
+                                                    <div class="d-flex">
+                                                        <div class="action-btn bg-primary ms-2">
+                                                            <a class="mx-3 btn btn-sm align-items-center" href="{{ \App\Models\Utility::get_file('uploads/documentUpload') . '/' . $document->document }}" download>
+                                                                <i class="ti ti-download text-white"></i>
+                                                            </a>
+                                                        </div>
+                                                        <div class="action-btn bg-secondary ms-2">
+                                                            <a class="mx-3 btn btn-sm align-items-center" href="{{ \App\Models\Utility::get_file('uploads/documentUpload') . '/' . $document->document }}" target="_blank">
+                                                                <i class="ti ti-crosshair text-white" data-bs-toggle="tooltip" data-bs-original-title="{{ __('Preview') }}"></i>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>{{ $document->description }}</td>
+                                                <td>
+                                                    @if ($document->status == 'approved')
+                                                        <span class="badge bg-success p-2 px-3 rounded status-badge7">{{ ucfirst($document->status) }}</span>
+                                                    @elseif($document->status == 'pending')
+                                                        <span class="badge bg-warning p-2 px-3 rounded status-badge7">{{ ucfirst($document->status) }}</span>
+                                                    @elseif($document->status == 'rejected')
+                                                        <span class="badge bg-danger p-2 px-3 rounded status-badge7">{{ ucfirst($document->status) }}</span>
+                                                    @endif
+                                                </td>
                                             </tr>
                                         @endforeach
                                     </tbody>

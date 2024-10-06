@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::table('documents', function (Blueprint $table) {
             $table->dropColumn('is_required');
+            $table->boolean('need_approval')->default(false);
+            $table->boolean('is_mandatory')->default(false);
         });
     }
 

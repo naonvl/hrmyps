@@ -19,7 +19,7 @@
             <div class="form-group">
                 {{ Form::label('branch_start_time', __('Branch Start Time'), ['class' => 'form-label']) }}
                 <div class="form-icon-user">
-                    {{ Form::time('branch_start_time', null, ['class' => 'form-control timepicker_format']) }}
+                    {{ Form::time('branch_start_time', '08:00', ['class' => 'form-control timepicker_format']) }}
                 </div>
                 @error('branch_start_time')
                     <span class="invalid-branch-start-time" role="alert">
@@ -32,7 +32,7 @@
             <div class="form-group">
                 {{ Form::label('branch_end_time', __('Branch End Time'), ['class' => 'form-label']) }}
                 <div class="form-icon-user">
-                    {{ Form::time('branch_end_time', null, ['class' => 'form-control timepicker_format']) }}
+                    {{ Form::time('branch_end_time', '17:00', ['class' => 'form-control timepicker_format']) }}
                 </div>
                 @error('branch_end_time')
                     <span class="invalid-branch-end-time" role="alert">

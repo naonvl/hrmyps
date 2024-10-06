@@ -185,7 +185,7 @@
             <div class="row">
                 <div class="col-sm-12 col-md-6">
 
-                    <div class="card " style="height:200px">
+                    <div class="card ">
                         <div class="card-body employee-detail-body fulls-card">
                             <h5><?php echo e(__('Document Detail')); ?></h5>
                             <hr>
@@ -198,15 +198,40 @@
                                 <table class="datatable table-bordered">
                                     <thead>
                                         <tr>
-                                            <th><?php echo e(__('Type')); ?></th>
-                                            <th><?php echo e(__('Document Name')); ?></th>
+                                            <th>Nama</th>
+                                            <th>Dokumen</th>
+                                            <th>Deskripsi</th>
+                                            <th>Status</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php $__currentLoopData = $documentUploads; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $document): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                             <tr>
                                                 <td><?php echo e($document->name); ?></td>
-                                                <td><?php echo e($document->typ); ?></td>
+                                                <td>
+                                                    <div class="d-flex">
+                                                        <div class="action-btn bg-primary ms-2">
+                                                            <a class="mx-3 btn btn-sm align-items-center" href="<?php echo e(\App\Models\Utility::get_file('uploads/documentUpload') . '/' . $document->document); ?>" download>
+                                                                <i class="ti ti-download text-white"></i>
+                                                            </a>
+                                                        </div>
+                                                        <div class="action-btn bg-secondary ms-2">
+                                                            <a class="mx-3 btn btn-sm align-items-center" href="<?php echo e(\App\Models\Utility::get_file('uploads/documentUpload') . '/' . $document->document); ?>" target="_blank">
+                                                                <i class="ti ti-crosshair text-white" data-bs-toggle="tooltip" data-bs-original-title="<?php echo e(__('Preview')); ?>"></i>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td><?php echo e($document->description); ?></td>
+                                                <td>
+                                                    <?php if($document->status == 'approved'): ?>
+                                                        <span class="badge bg-success p-2 px-3 rounded status-badge7"><?php echo e(ucfirst($document->status)); ?></span>
+                                                    <?php elseif($document->status == 'pending'): ?>
+                                                        <span class="badge bg-warning p-2 px-3 rounded status-badge7"><?php echo e(ucfirst($document->status)); ?></span>
+                                                    <?php elseif($document->status == 'rejected'): ?>
+                                                        <span class="badge bg-danger p-2 px-3 rounded status-badge7"><?php echo e(ucfirst($document->status)); ?></span>
+                                                    <?php endif; ?>
+                                                </td>
                                             </tr>
                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </tbody>

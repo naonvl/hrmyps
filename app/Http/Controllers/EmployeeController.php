@@ -250,9 +250,11 @@ class EmployeeController extends Controller
             $employee = Employee::findOrFail($id);
             $input    = $request->all();
             $employee->fill($input)->save();
-            $user = User::find($employee->user_id);
-            $user->password = Hash::make($request->password);
-            $user->save();
+            if (!empty($request->password)) {
+                $user = User::find($employee->user_id);
+                $user->password = Hash::make($request->password);
+                $user->save();
+            }
             if ($request->salary) {
                 return redirect()->route('setsalary.index')->with('success', 'Employee successfully updated.');
             }
