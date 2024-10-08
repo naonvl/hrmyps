@@ -115,12 +115,14 @@
                                     </div>
                                 </div>
 
-                                <div class="form-group col-md-6">
-                                    {{-- {{ Form::label('department_id', __('Select Department*'), ['class' => 'form-label']) }}
-                                    <div class="form-icon-user">
-                                        {{ Form::select('department_id', $departments, null, ['class' => 'form-control ', 'id' => 'department_id', 'required' => 'required', 'placeholder' => 'Select Department']) }}
-                                    </div> --}}
+                                <div class="form-group col-md-6 d-flex align-items-center">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="is_branch_admin" name="is_branch_admin" value="0">
+                                        <label class="custom-control-label" for="is_branch_admin">{{ __('Admin Cabang') }}</label>
+                                    </div>
+                                </div>
 
+                                <div class="form-group col-md-6">
                                     <div class="form-icon-user" id="department_id">
                                         {{ Form::label('department_id', __('Department'), ['class' => 'form-label']) }}
                                         <select class="form-control department_id" name="department_id" id="department_id"
@@ -128,6 +130,12 @@
                                         </select>
                                     </div>
 
+                                </div>
+                                <div class="form-group col-md-6 d-flex align-items-center">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="is_dept_admin" name="is_dept_admin" value="0">
+                                        <label class="custom-control-label" for="is_dept_admin">{{ __('Admin Departemen') }}</label>
+                                    </div>
                                 </div>
 
                                 <div class="form-group">
@@ -151,66 +159,6 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-6 ">
-                    <div class="card em-card">
-                        <div class="card-header">
-                            <h5>{{ __('Document') }}</h6>
-                        </div>
-                        <div class="card-body employee-detail-create-body">
-                            @foreach ($documents as $key => $document)
-                                <div class="row">
-                                    <div class="form-group col-12 d-flex">
-                                        <div class="float-left col-4">
-                                            <label for="document" class="float-left pt-1 form-label">{{ $document->name }}
-                                                @if ($document->is_required == 1)
-                                                    <span class="text-danger">*</span>
-                                                @endif
-                                            </label>
-                                        </div>
-                                        <div class="float-right col-8">
-                                            <input type="hidden" name="emp_doc_id[{{ $document->id }}]" id=""
-                                                value="{{ $document->id }}">
-                                            <!--  <div class="choose-file form-group">
-                                                            <label for="document[{{ $document->id }}]"
-                                                                class="choose-files bg-primary">
-                                                                <div>{{ __('Choose File') }}</div>
-                                                                <input
-                                                                    class="form-control d-none @error('document') is-invalid @enderror border-0"
-                                                                    @if ($document->is_required == 1) required @endif
-                                                                    name="document[{{ $document->id }}]" type="file"
-                                                                    id="document[{{ $document->id }}]"
-                                                                    data-filename="{{ $document->id . '_filename' }}">
-                                                            </label>
-                                                           <a href="#"><p class="{{ $document->id . '_filename' }} "></p></a>
-
-                                                        </div> -->
-
-                                            <div class="choose-files ">
-                                                <label for="document[{{ $document->id }}]">
-                                                    <div class=" bg-primary document cursor-pointer"> <i
-                                                            class="ti ti-upload px-1"></i>{{ __('Choose file here') }}
-                                                    </div>
-                                                    <input type="file"
-                                                        class="form-control file @error('document') is-invalid @enderror "
-                                                        @if ($document->is_required == 1) required @endif
-                                                        name="document[{{ $document->id }}]"
-                                                        id="document[{{ $document->id }}]"
-                                                        data-filename="{{ $document->id . '_filename' }}"
-                                                        onchange="document.getElementById('{{ 'blah' . $key }}').src = window.URL.createObjectURL(this.files[0])">
-                                                    </label>
-                                                    <img id="{{ 'blah' . $key }}" src="" width="50%" />
-                                                {{-- <a><p class="{{ $document->id . '_filename' }} "></p></a> --}}
-
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
                 <div class="col-md-6 ">
                     <div class="card em-card ">
                         <div class="card-header">

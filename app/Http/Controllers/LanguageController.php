@@ -174,7 +174,7 @@ class LanguageController extends Controller
                 Utility::notificationTemplateLang($request->code);
             }
 
-            $Filesystem->copyDirectory($langDir . "en", $dir . "/");
+            $Filesystem->copyDirectory($langDir . "id", $dir . "/");
 
             return redirect()->route('manage.language', [$langCode])->with('success', __('Language successfully created.'));
         } else {

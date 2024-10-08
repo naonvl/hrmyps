@@ -46,6 +46,7 @@
                                 <th>{{ __('Department') }}</th>
                                 <th>{{ __('Designation') }}</th>
                                 <th>{{ __('Date Of Joining') }}</th>
+                                <th>Dokumen Wajib</th>
                                 @if (Gate::check('Edit Employee') || Gate::check('Delete Employee'))
                                     <th width="200px">{{ __('Action') }}</th>
                                 @endif
@@ -75,6 +76,27 @@
                                     </td>
                                     <td>
                                         {{ \Auth::user()->dateFormat($employee->company_doj) }}
+                                    </td>
+                                    <td>
+                                        <div class="d-flex justify-content-center">
+                                            @foreach ($documents as $doc)
+                                                @php
+                                                    $document = $employee->documentUploads->where('type', $doc->id)->first();
+                                                @endphp
+                                                @if ($document)
+                                                    @if ($document->status == 'approved')
+                                                        ✅
+                                                    @elseif($document->status == 'rejected')
+                                                        ❌
+                                                    @else
+                                                        ⌛
+                                                    @endif
+                                                @else
+                                                ❌
+                                                @endif
+                                                {{ $doc->name }}
+                                            @endforeach
+                                        </div>
                                     </td>
                                     @if (Gate::check('Edit Employee') || Gate::check('Delete Employee'))
                                         <td class="Action">

@@ -125,9 +125,14 @@
                                     </div>
                                 </div>
 
-                                <div class="form-group col-md-6">
-                                    
+                                <div class="form-group col-md-6 d-flex align-items-center">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="is_branch_admin" name="is_branch_admin" value="0">
+                                        <label class="custom-control-label" for="is_branch_admin"><?php echo e(__('Admin Cabang')); ?></label>
+                                    </div>
+                                </div>
 
+                                <div class="form-group col-md-6">
                                     <div class="form-icon-user" id="department_id">
                                         <?php echo e(Form::label('department_id', __('Department'), ['class' => 'form-label'])); ?>
 
@@ -136,6 +141,12 @@
                                         </select>
                                     </div>
 
+                                </div>
+                                <div class="form-group col-md-6 d-flex align-items-center">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="is_dept_admin" name="is_dept_admin" value="0">
+                                        <label class="custom-control-label" for="is_dept_admin"><?php echo e(__('Admin Departemen')); ?></label>
+                                    </div>
                                 </div>
 
                                 <div class="form-group">
@@ -162,82 +173,6 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-6 ">
-                    <div class="card em-card">
-                        <div class="card-header">
-                            <h5><?php echo e(__('Document')); ?></h6>
-                        </div>
-                        <div class="card-body employee-detail-create-body">
-                            <?php $__currentLoopData = $documents; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $document): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                <div class="row">
-                                    <div class="form-group col-12 d-flex">
-                                        <div class="float-left col-4">
-                                            <label for="document" class="float-left pt-1 form-label"><?php echo e($document->name); ?>
-
-                                                <?php if($document->is_required == 1): ?>
-                                                    <span class="text-danger">*</span>
-                                                <?php endif; ?>
-                                            </label>
-                                        </div>
-                                        <div class="float-right col-8">
-                                            <input type="hidden" name="emp_doc_id[<?php echo e($document->id); ?>]" id=""
-                                                value="<?php echo e($document->id); ?>">
-                                            <!--  <div class="choose-file form-group">
-                                                            <label for="document[<?php echo e($document->id); ?>]"
-                                                                class="choose-files bg-primary">
-                                                                <div><?php echo e(__('Choose File')); ?></div>
-                                                                <input
-                                                                    class="form-control d-none <?php $__errorArgs = ['document'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?> border-0"
-                                                                    <?php if($document->is_required == 1): ?> required <?php endif; ?>
-                                                                    name="document[<?php echo e($document->id); ?>]" type="file"
-                                                                    id="document[<?php echo e($document->id); ?>]"
-                                                                    data-filename="<?php echo e($document->id . '_filename'); ?>">
-                                                            </label>
-                                                           <a href="#"><p class="<?php echo e($document->id . '_filename'); ?> "></p></a>
-
-                                                        </div> -->
-
-                                            <div class="choose-files ">
-                                                <label for="document[<?php echo e($document->id); ?>]">
-                                                    <div class=" bg-primary document cursor-pointer"> <i
-                                                            class="ti ti-upload px-1"></i><?php echo e(__('Choose file here')); ?>
-
-                                                    </div>
-                                                    <input type="file"
-                                                        class="form-control file <?php $__errorArgs = ['document'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?> "
-                                                        <?php if($document->is_required == 1): ?> required <?php endif; ?>
-                                                        name="document[<?php echo e($document->id); ?>]"
-                                                        id="document[<?php echo e($document->id); ?>]"
-                                                        data-filename="<?php echo e($document->id . '_filename'); ?>"
-                                                        onchange="document.getElementById('<?php echo e('blah' . $key); ?>').src = window.URL.createObjectURL(this.files[0])">
-                                                    </label>
-                                                    <img id="<?php echo e('blah' . $key); ?>" src="" width="50%" />
-                                                
-
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-                                </div>
-                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                        </div>
-                    </div>
-                </div>
                 <div class="col-md-6 ">
                     <div class="card em-card ">
                         <div class="card-header">

@@ -1722,20 +1722,7 @@ class Utility extends Model
     public static function flagOfCountry()
     {
         $arr = [
-            'ar' => '🇦🇪 ar',
-            'da' => '🇩🇰 da',
-            'de' => '🇩🇪 de',
-            'es' => '🇪🇸 es',
-            'fr' => '🇫🇷 fr',
-            'it' =>  '🇮🇹 it',
-            'ja' => '🇯🇵 ja',
-            'nl' => '🇳🇱 nl',
-            'pl' => '🇵🇱 pl',
-            'ru' => '🇷🇺 ru',
-            'pt' => '🇵🇹 pt',
-            'en' => '🇮🇳 en',
-            'tr' => '🇹🇷 tr',
-            'pt-br' => '🇵🇹 pt-br',
+            'id' => 'ID id',
         ];
         return $arr;
     }
@@ -1771,7 +1758,7 @@ class Utility extends Model
     public static function langList()
     {
         $languages = [
-            "en" => "English",
+            "id" => "Indonesia",
         ];
         return $languages;
     }

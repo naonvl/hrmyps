@@ -46,7 +46,7 @@
 
                                 </div>
                                 <div class="form-group col-md-6">
-                                    <?php echo Form::label('password', __('Password'), ['class' => 'form-label']); ?><span class="text-danger pl-1">*</span>
+                                    <?php echo Form::label('password', __('Password'), ['class' => 'form-label']); ?></span>
                                     <?php echo Form::password('password', [
                                         'class' => 'form-control',
                                         'placeholder' => 'Enter employee Password',
@@ -115,6 +115,13 @@
                                         <?php echo e(Form::select('branch_id', $branches, null, ['class' => 'form-control ', 'required' => 'required', 'placeholder' => 'Select Branch'])); ?>
 
                                     </div>
+                                    <div class="form-group col-md-6 d-flex align-items-center">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="is_branch_admin" name="is_branch_admin" value="1"
+                                                <?php echo e($employee->is_branch_admin == 1 ? 'checked' : ''); ?>>
+                                            <label class="custom-control-label" for="is_branch_admin"><?php echo e(__('Admin Cabang')); ?></label>
+                                        </div>
+                                    </div>
                                     <div class="form-group col-md-6">
                                         <?php echo e(Form::label('department_id', __('Select Department*'), ['class' => 'form-label'])); ?>
 
@@ -123,11 +130,15 @@
 
                                         </div>
                                     </div>
+                                    <div class="form-group col-md-6 d-flex align-items-center">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="is_dept_admin" name="is_dept_admin" value="1"
+                                                <?php echo e($employee->is_dept_admin == 1 ? 'checked' : ''); ?>>
+                                            <label class="custom-control-label" for="is_dept_admin"><?php echo e(__('Admin Departemen')); ?></label>
+                                        </div>
+                                    </div>
                                     <div class="form-group col-md-6">
                                         <?php echo e(Form::label('designation_id', __('Designation'), ['class' => 'form-label'])); ?>
-
-                                        
-
 
                                         <div class="form-icon-user">
                                             <div class="designation_div">
@@ -138,8 +149,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group col-md-6">
-                                        <?php echo Form::label('company_doj', 'Company Date Of Joining', ['class' => 'form-label']); ?>
-
+                                        <?php echo Form::label('company_doj', 'Company Date Of Joining', ['class' => 'form-label']); ?><span class="text-danger pl-1">*</span>
                                         <?php echo Form::date('company_doj', null, [
                                             'class' => 'form-control ',
                                             'id' => 'data_picker2',

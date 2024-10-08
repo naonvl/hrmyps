@@ -41,15 +41,30 @@ class EmployeeController extends Controller
      */
     public function index()
     {
+        $user = \Auth::user();
+        $documents = Document::where('is_mandatory', 1)->get();
+        $documentIds = $documents->pluck('id')->toArray();
+        if ($user->can('Manage Employee')) {
+            $conditions = [];
 
-        if (\Auth::user()->can('Manage Employee')) {
-            if (Auth::user()->type == 'employee') {
-                $employees = Employee::where('user_id', '=', Auth::user()->id)->get();
+            if ($user->type == 'employee') {
+                if ($user->employee->is_branch_admin) {
+                    $conditions['branch_id'] = $user->employee->branch_id;
+                }
+
+                if ($user->employee->is_dept_admin) {
+                    $conditions['department_id'] = $user->employee->department_id;
+                }
             } else {
-                $employees = Employee::where('created_by', \Auth::user()->creatorId())->with(['branch', 'department', 'designation'])->get();
+                $conditions['created_by'] = $user->creatorId();
             }
 
-            return view('employee.index', compact('employees'));
+            $employees = Employee::where($conditions)->with(['branch', 'department', 'designation'])->get();
+
+            foreach ($employees as $employee) {
+                $employee->documentUploads = DocumentUpload::where('created_by', $employee->id)->whereIn('type', $documentIds)->get();
+            }
+            return view('employee.index', compact('employees','documents'));
         } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }
@@ -154,7 +169,7 @@ class EmployeeController extends Controller
                     'address' => $request['address'],
                     'email' => $request['email'],
                     'password' => Hash::make($request['password']),
-                    'employee_id' => $this->employeeNumber(),
+                    'employee_id' => $request['employee_id'],
                     'branch_id' => $request['branch_id'],
                     'department_id' => $request['department_id'],
                     'designation_id' => $request['designation_id'],
@@ -493,7 +508,7 @@ class EmployeeController extends Controller
                 $user->assignRole('Employee');
 
                 $employeeData = new Employee();
-                $employeeData->employee_id      = $this->employeeNumber();
+                $employeeData->employee_id      = $employeeData->employee_id ;
                 $employeeData->user_id             = $user->id;
             }
 
@@ -505,7 +520,7 @@ class EmployeeController extends Controller
             $employeeData->address             = $employee[4];
             $employeeData->email               = $employee[5];
             $employeeData->password            = Hash::make($employee[6]);
-            $employeeData->employee_id         = $this->employeeNumber();
+            $employeeData->employee_id         = $employee[7];
             $employeeData->branch_id           = $employee[8];
             $employeeData->department_id       = $employee[9];
             $employeeData->designation_id      = $employee[10];

@@ -153,7 +153,7 @@
 
             <!-- employee-->
             <?php if(Gate::check('Manage Employee')): ?>
-                <?php if(\Auth::user()->type == 'employee'): ?>
+                <?php if(\Auth::user()->type == 'employee' &&  !\Auth::user()->employee->is_branch_admin && !\Auth::user()->employee->is_dept_admin): ?>
                     <?php
                         $employee = App\Models\Employee::where('user_id', \Auth::user()->id)->first();
                     ?>

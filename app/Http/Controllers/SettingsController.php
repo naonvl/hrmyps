@@ -31,22 +31,22 @@ class SettingsController extends Controller
         if ($request->offerlangs) {
             $offerlang = $request->offerlangs;
         } else {
-            $offerlang = "en";
+            $offerlang = "id";
         }
         if ($request->joininglangs) {
             $joininglang = $request->joininglangs;
         } else {
-            $joininglang = "en";
+            $joininglang = "id";
         }
         if ($request->explangs) {
             $explang = $request->explangs;
         } else {
-            $explang = "en";
+            $explang = "id";
         }
         if ($request->noclangs) {
             $noclang = $request->noclangs;
         } else {
-            $noclang = "en";
+            $noclang = "id";
         }
 
         $offerlangName = \App\Models\Languages::where('code', $offerlang)->first();

@@ -44,6 +44,7 @@
                                 <th><?php echo e(__('Department')); ?></th>
                                 <th><?php echo e(__('Designation')); ?></th>
                                 <th><?php echo e(__('Date Of Joining')); ?></th>
+                                <th>Dokumen Wajib</th>
                                 <?php if(Gate::check('Edit Employee') || Gate::check('Delete Employee')): ?>
                                     <th width="200px"><?php echo e(__('Action')); ?></th>
                                 <?php endif; ?>
@@ -77,6 +78,28 @@
                                     <td>
                                         <?php echo e(\Auth::user()->dateFormat($employee->company_doj)); ?>
 
+                                    </td>
+                                    <td>
+                                        <div class="d-flex justify-content-center">
+                                            <?php $__currentLoopData = $documents; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $doc): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <?php
+                                                    $document = $employee->documentUploads->where('type', $doc->id)->first();
+                                                ?>
+                                                <?php if($document): ?>
+                                                    <?php if($document->status == 'approved'): ?>
+                                                        ✅
+                                                    <?php elseif($document->status == 'rejected'): ?>
+                                                        ❌
+                                                    <?php else: ?>
+                                                        ⌛
+                                                    <?php endif; ?>
+                                                <?php else: ?>
+                                                ❌
+                                                <?php endif; ?>
+                                                <?php echo e($doc->name); ?>
+
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        </div>
                                     </td>
                                     <?php if(Gate::check('Edit Employee') || Gate::check('Delete Employee')): ?>
                                         <td class="Action">

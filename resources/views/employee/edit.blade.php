@@ -43,7 +43,7 @@
                                     {!! Form::email('email', null, ['class' => 'form-control', 'required' => 'required']) !!}
                                 </div>
                                 <div class="form-group col-md-6">
-                                    {!! Form::label('password', __('Password'), ['class' => 'form-label']) !!}<span class="text-danger pl-1">*</span>
+                                    {!! Form::label('password', __('Password'), ['class' => 'form-label']) !!}</span>
                                     {!! Form::password('password', [
                                         'class' => 'form-control',
                                         'placeholder' => 'Enter employee Password',
@@ -104,21 +104,28 @@
                                         {{ Form::label('branch_id', __('Branch'), ['class' => 'form-label']) }}
                                         {{ Form::select('branch_id', $branches, null, ['class' => 'form-control ', 'required' => 'required', 'placeholder' => 'Select Branch']) }}
                                     </div>
+                                    <div class="form-group col-md-6 d-flex align-items-center">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="is_branch_admin" name="is_branch_admin" value="1"
+                                                {{ $employee->is_branch_admin == 1 ? 'checked' : '' }}>
+                                            <label class="custom-control-label" for="is_branch_admin">{{ __('Admin Cabang') }}</label>
+                                        </div>
+                                    </div>
                                     <div class="form-group col-md-6">
                                         {{ Form::label('department_id', __('Select Department*'), ['class' => 'form-label']) }}
                                         <div class="department_div">
                                             {{ Form::select('department_id', $departments, null, ['class' => 'form-control department_id', 'id' => 'department_id', 'required' => 'required', 'id' => 'department_id']) }}
                                         </div>
                                     </div>
+                                    <div class="form-group col-md-6 d-flex align-items-center">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="is_dept_admin" name="is_dept_admin" value="1"
+                                                {{ $employee->is_dept_admin == 1 ? 'checked' : '' }}>
+                                            <label class="custom-control-label" for="is_dept_admin">{{ __('Admin Departemen') }}</label>
+                                        </div>
+                                    </div>
                                     <div class="form-group col-md-6">
                                         {{ Form::label('designation_id', __('Designation'), ['class' => 'form-label']) }}
-                                        {{-- <select class=" form-control select2-multiple" id="designation_id"
-                                            name="designation_id" data-toggle=""
-                                            data-placeholder="{{ __('Select Designation ...') }}">
-                                            <option value="">{{ __('Select any Designation') }}</option>
-                                        </select> --}}
-
-
                                         <div class="form-icon-user">
                                             <div class="designation_div">
                                                 <select class="form-control designation_id select2" name="designation_id"
@@ -128,7 +135,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group col-md-6">
-                                        {!! Form::label('company_doj', 'Company Date Of Joining', ['class' => 'form-label']) !!}
+                                        {!! Form::label('company_doj', 'Company Date Of Joining', ['class' => 'form-label']) !!}<span class="text-danger pl-1">*</span>
                                         {!! Form::date('company_doj', null, [
                                             'class' => 'form-control ',
                                             'id' => 'data_picker2',
